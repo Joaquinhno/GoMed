@@ -1,0 +1,89 @@
+﻿<Window x:Class="GoMed.RegistroWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GoMed"
+        mc:Ignorable="d"
+        Title="Registrar Nueva Cuenta" 
+        Height="610" Width="450"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        Background="#F8F9FA">
+
+    <Border Padding="30" BorderBrush="#E0E0E0" BorderThickness="1" Background="White" Margin="20" CornerRadius="8">
+        <StackPanel VerticalAlignment="Center">
+
+            <TextBlock Text="Crear Cuenta en GoMed" 
+                       FontSize="24" 
+                       FontWeight="Bold" 
+                       Foreground="#343A40" 
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,25"/>
+
+            <!-- Fila de Nombre y Apellido -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <Label Content="Nombre:"/>
+                    <TextBox x:Name="txtNombre"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <Label Content="Apellido:"/>
+                    <TextBox x:Name="txtApellido"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- 
+            ==============================================
+            AQUÍ ESTÁ EL CAMBIO:
+            Puse el Email antes que la Especialidad,
+            ¡y me aseguré de que el TextBox txtEmail exista!
+            ==============================================
+            -->
+
+            <!-- 1. Email -->
+            <Label Content="Email (será su usuario):" Margin="0,15,0,0"/>
+            <TextBox x:Name="txtEmail"/>
+
+            <!-- 2. Especialidad -->
+            <Label Content="Especialidad:" Margin="0,15,0,0"/>
+            <ComboBox x:Name="cmbEspecialidad" Padding="10,8"/>
+
+            <!-- 3. Contraseña -->
+            <Label Content="Contraseña:" Margin="0,15,0,0"/>
+            <PasswordBox x:Name="txtPassword" 
+                         Padding="10,8" 
+                         BorderBrush="#CED4DA" 
+                         BorderThickness="1"/>
+
+            <!-- 4. Confirmar Contraseña -->
+            <Label Content="Confirmar Contraseña:" Margin="0,15,0,0"/>
+            <PasswordBox x:Name="txtConfirmarPassword" 
+                         Padding="10,8" 
+                         BorderBrush="#CED4DA" 
+                         BorderThickness="1"/>
+
+            <!-- 5. Botones de Acción -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+                <Button x:Name="btnCancelar" 
+                        Content="Cancelar" 
+                        Style="{StaticResource CancelButtonStyle}" 
+                        Click="BtnCancelar_Click"/>
+
+                <Button x:Name="btnRegistrar" 
+                        Content="Registrar" 
+                        Style="{StaticResource SaveButtonStyle}" 
+                        Margin="10,0,0,0" 
+                        Click="BtnRegistrar_Click"/>
+            </StackPanel>
+
+        </StackPanel>
+    </Border>
+</Window>

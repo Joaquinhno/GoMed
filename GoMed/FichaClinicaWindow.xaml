@@ -1,0 +1,110 @@
+﻿<Window x:Class="GoMed.FichaClinicaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GoMed"
+        mc:Ignorable="d"
+        Title="Ficha Clínica del Paciente" 
+        Height="800" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="#F8F9FA">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0">
+            <StackPanel Margin="10">
+                <TextBlock Text="⚕ GoMed" Foreground="#007BFF" FontSize="22" FontWeight="Bold" Margin="15,10,10,30"/>
+
+                <Button Content="Ficha Clínica" Style="{StaticResource SidebarButtonActiveStyle}"/>
+
+                <Button x:Name="btnVolverInicio" Content="Inicio" Style="{StaticResource SidebarButtonStyle}" Click="BtnVolverInicio_Click"/>
+
+                <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,5,0,10" MaxHeight="500">
+                    <Separator Background="#E0E0E0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="40">
+
+                <TextBlock Text="Ficha Clínica del Paciente" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextDarkBrush}" Margin="0,0,0,25"/>
+
+                <Label Content="Buscar Paciente (por Nombre o DNI)"/>
+                <ComboBox x:Name="cmbPaciente" 
+                          IsEditable="True" 
+                          SelectionChanged="CmbPaciente_SelectionChanged"/>
+
+                <Separator Margin="0,25,0,25" Background="{StaticResource BorderLightBrush}"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0">
+                        <Label Content="Antecedentes Personales"/>
+                        <TextBox x:Name="txtAntecedentesPersonales" 
+                                 Height="200" 
+                                 TextWrapping="Wrap" 
+                                 AcceptsReturn="True" 
+                                 VerticalScrollBarVisibility="Auto" 
+                                 VerticalContentAlignment="Top" 
+                                 Padding="10"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="2">
+                        <Label Content="Antecedentes Familiares"/>
+                        <TextBox x:Name="txtAntecedentesFamiliares" 
+                                 Height="200" 
+                                 TextWrapping="Wrap" 
+                                 AcceptsReturn="True" 
+                                 VerticalScrollBarVisibility="Auto" 
+                                 VerticalContentAlignment="Top" 
+                                 Padding="10"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0">
+                        <Label Content="Examen Físico"/>
+                        <TextBox x:Name="txtExamenFisico" 
+                                 Height="200" 
+                                 TextWrapping="Wrap" 
+                                 AcceptsReturn="True" 
+                                 VerticalScrollBarVisibility="Auto" 
+                                 VerticalContentAlignment="Top" 
+                                 Padding="10"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="2">
+                        <Label Content="Notas Adicionales"/>
+                        <TextBox x:Name="txtNotas" 
+                                 Height="200" 
+                                 TextWrapping="Wrap" 
+                                 AcceptsReturn="True" 
+                                 VerticalScrollBarVisibility="Auto" 
+                                 VerticalContentAlignment="Top" 
+                                 Padding="10"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+                    <Button x:Name="btnCancelar" Content="Cancelar" Style="{StaticResource CancelButtonStyle}" Click="BtnCancelar_Click"/>
+                    <Button x:Name="btnGuardar" Content="Guardar Ficha" Style="{StaticResource SaveButtonStyle}" Margin="10,0,0,0" Click="BtnGuardar_Click"/>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

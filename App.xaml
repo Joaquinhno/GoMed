@@ -1,0 +1,25 @@
+<Application.Resources>
+    <!-- ... otros recursos ... -->
+    <Style x:Key="SidebarButtonActiveStyle" TargetType="Button">
+        <Setter Property="Background" Value="#E3F2FD"/>
+        <Setter Property="Foreground" Value="#007BFF"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="BorderBrush" Value="#90CAF9"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="Margin" Value="0,5,0,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="4">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <!-- ... otros recursos ... -->
+</Application.Resources>
