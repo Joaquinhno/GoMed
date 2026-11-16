@@ -1,7 +1,7 @@
 ﻿<UserControl x:Class="GoMed.GenerarRecetaWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="{StaticResource AppBackgroundBrush}">
+             Background="{DynamicResource AppBackgroundBrush}">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="40,30" MaxWidth="1100">
@@ -21,8 +21,8 @@
                 <Border Style="{StaticResource GoMedCardStyle}">
                     <StackPanel>
                         <Label Content="Paciente Destinatario" FontWeight="Bold" Margin="0,0,0,5"/>
-                        <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="5">
-                            <ComboBox x:Name="cmbPaciente" IsEditable="True" BorderThickness="0" Height="32" DisplayMemberPath="NombreCompleto" SelectedValuePath="PacienteID"/>
+                        <Border Background="{DynamicResource InputBackgroundBrush}" CornerRadius="8" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" Padding="5">
+                            <ComboBox x:Name="cmbPaciente" IsEditable="True" Background="Transparent" BorderThickness="0" Height="32" DisplayMemberPath="NombreCompleto" SelectedValuePath="PacienteID"/>
                         </Border>
                     </StackPanel>
                 </Border>
@@ -58,8 +58,8 @@
 
                         <Button Grid.Row="2" Grid.Column="2" x:Name="btnAgregarLista" Content="+ Añadir a la Receta"
                                 Style="{StaticResource BaseButtonStyle}"
-                                Background="{StaticResource LightBlueHover}" Foreground="{StaticResource PrimaryBlueBrush}"
-                                BorderBrush="{StaticResource PrimaryBlueBrush}"
+                                Background="{DynamicResource LightBlueHover}" Foreground="{DynamicResource PrimaryBlueBrush}"
+                                BorderBrush="{DynamicResource PrimaryBlueBrush}"
                                 Margin="0,20,0,0" Click="BtnAgregarLista_Click"/>
                     </Grid>
                 </Border>
@@ -69,7 +69,18 @@
                     <StackPanel>
                         <Label Content="Medicamentos en esta Receta" FontWeight="Bold" Margin="0,0,0,10"/>
                         <DataGrid x:Name="dgRecetaTemporal" AutoGenerateColumns="False" CanUserAddRows="False"
-                                  Background="White" BorderBrush="#EEE" RowHeight="38" FontSize="14" Height="180">
+                                  Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderCardBrush}"
+                                  Foreground="{DynamicResource TextDarkBrush}" RowBackground="{DynamicResource SurfaceBrush}"
+                                  HorizontalGridLinesBrush="{DynamicResource GridLineBrush}" VerticalGridLinesBrush="{DynamicResource GridLineBrush}"
+                                  RowHeight="38" FontSize="14" Height="180">
+                            <DataGrid.Resources>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="Padding" Value="10,8"/>
+                                </Style>
+                            </DataGrid.Resources>
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Medicamento" Binding="{Binding Nombre}" Width="*"/>
                                 <DataGridTextColumn Header="Dosis" Binding="{Binding Dosis}" Width="*"/>
@@ -91,7 +102,7 @@
 
                     <Button x:Name="btnPrevisualizar" Content="👁 Previsualizar" Click="BtnPrevisualizar_Click"
                             Style="{StaticResource BaseButtonStyle}"
-                            Background="#E8F0F8" Foreground="{StaticResource PrimaryBlueBrush}" BorderBrush="{StaticResource PrimaryBlueBrush}"
+                            Background="{DynamicResource LightBlueHover}" Foreground="{DynamicResource PrimaryBlueBrush}" BorderBrush="{DynamicResource PrimaryBlueBrush}"
                             Margin="0,0,12,0"/>
 
                     <Button x:Name="btnGenerarPDF" Content="💾 Generar y Guardar PDF"

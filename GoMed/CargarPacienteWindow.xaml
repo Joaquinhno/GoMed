@@ -1,13 +1,13 @@
 ﻿<UserControl x:Class="GoMed.CargarPacienteWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="{StaticResource AppBackgroundBrush}">
+             Background="{DynamicResource AppBackgroundBrush}">
 
     <UserControl.Resources>
         <Style TargetType="TextBlock" x:Key="LabelStyle">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
             <Setter Property="Margin" Value="6,0,0,0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
@@ -22,8 +22,8 @@
 
             <!-- ENCABEZADO DE LA VISTA -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,25">
-                <Border Background="{StaticResource SidebarBackgroundActiveBrush}" Width="52" Height="52" CornerRadius="12" Margin="0,0,15,0">
-                    <TextBlock Text="👤" Foreground="{StaticResource PrimaryBlueBrush}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Border Background="{DynamicResource SidebarBackgroundActiveBrush}" Width="52" Height="52" CornerRadius="12" Margin="0,0,15,0">
+                    <TextBlock Text="👤" Foreground="{DynamicResource PrimaryBlueBrush}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock x:Name="lblTituloVista" Text="Ficha de Paciente" Style="{StaticResource ViewTitleStyle}"/>
@@ -41,10 +41,10 @@
                     </Grid.RowDefinitions>
 
                     <!-- Encabezado interior -->
-                    <Border Grid.Row="0" Background="{StaticResource SidebarBackgroundActiveBrush}" CornerRadius="8" Padding="15,12" Margin="0,0,0,20">
+                    <Border Grid.Row="0" Background="{DynamicResource SidebarBackgroundActiveBrush}" CornerRadius="8" Padding="15,12" Margin="0,0,0,20">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="👤" Foreground="{StaticResource PrimaryBlueBrush}" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Datos personales" FontSize="15" FontWeight="Bold" Foreground="{StaticResource TextDarkBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Text="👤" Foreground="{DynamicResource PrimaryBlueBrush}" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Datos personales" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextDarkBrush}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
@@ -67,13 +67,13 @@
                         <!-- FILA 1: Nombre y Apellido -->
                         <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="👤" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="👤" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Nombre *" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <Border Style="{StaticResource InputBorderStyle}">
                                 <Grid>
                                     <TextBox x:Name="txtNombre" Background="Transparent" BorderThickness="0" FontSize="14" Padding="2,0" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="Ingrese el nombre" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
+                                    <TextBlock Text="Ingrese el nombre" Foreground="{DynamicResource PlaceholderTextBrush}" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -91,13 +91,13 @@
 
                         <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="👤" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="👤" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Apellido *" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <Border Style="{StaticResource InputBorderStyle}">
                                 <Grid>
                                     <TextBox x:Name="txtApellido" Background="Transparent" BorderThickness="0" FontSize="14" Padding="2,0" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="Ingrese el apellido" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
+                                    <TextBlock Text="Ingrese el apellido" Foreground="{DynamicResource PlaceholderTextBrush}" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -116,13 +116,13 @@
                         <!-- FILA 2: DNI y Fecha Nacimiento -->
                         <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="💳" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="💳" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="D.N.I. *" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <Border Style="{StaticResource InputBorderStyle}">
                                 <Grid>
                                     <TextBox x:Name="txtDni" Background="Transparent" BorderThickness="0" FontSize="14" Padding="2,0" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="Ingrese el número de documento" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
+                                    <TextBlock Text="Ingrese el número de documento" Foreground="{DynamicResource PlaceholderTextBrush}" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -140,7 +140,7 @@
 
                         <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="📅" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="📅" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Fecha de Nacimiento y Edad *" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <Grid>
@@ -152,8 +152,8 @@
                                 <Border Grid.Column="0" Style="{StaticResource InputBorderStyle}">
                                     <DatePicker x:Name="dpFechaNacimiento" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Center" SelectedDateChanged="DpFechaNacimiento_SelectedDateChanged"/>
                                 </Border>
-                                <Border Grid.Column="2" Background="{StaticResource SidebarBackgroundActiveBrush}" CornerRadius="6">
-                                    <TextBlock x:Name="lblEdad" FontSize="13" Foreground="{StaticResource PrimaryBlueBrush}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Text="-- años"/>
+                                <Border Grid.Column="2" Background="{DynamicResource SidebarBackgroundActiveBrush}" CornerRadius="6">
+                                    <TextBlock x:Name="lblEdad" FontSize="13" Foreground="{DynamicResource PrimaryBlueBrush}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Text="-- años"/>
                                 </Border>
                             </Grid>
                         </StackPanel>
@@ -161,13 +161,13 @@
                         <!-- FILA 3: Teléfono y Email -->
                         <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="📞" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="📞" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Teléfono Móvil" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <Border Style="{StaticResource InputBorderStyle}">
                                 <Grid>
                                     <TextBox x:Name="txtTelefono" Background="Transparent" BorderThickness="0" FontSize="14" Padding="2,0" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="Ingrese el número de celular" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
+                                    <TextBlock Text="Ingrese el número de celular" Foreground="{DynamicResource PlaceholderTextBrush}" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -185,13 +185,13 @@
 
                         <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="✉️" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="✉️" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Correo Electrónico (Email)" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <Border Style="{StaticResource InputBorderStyle}">
                                 <Grid>
                                     <TextBox x:Name="txtEmail" Background="Transparent" BorderThickness="0" FontSize="14" Padding="2,0" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="Ingrese el correo electrónico" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
+                                    <TextBlock Text="Ingrese el correo electrónico" Foreground="{DynamicResource PlaceholderTextBrush}" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -210,7 +210,7 @@
                         <!-- FILA 4: Lugar de Nacimiento y Ocupación -->
                         <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="📍" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="📍" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Lugar de Nacimiento" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <Border Style="{StaticResource InputBorderStyle}" Padding="4,0">
@@ -220,13 +220,13 @@
 
                         <StackPanel Grid.Row="3" Grid.Column="2" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="💼" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="💼" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Ocupación / Profesión" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <Border Style="{StaticResource InputBorderStyle}">
                                 <Grid>
                                     <TextBox x:Name="txtOcupacion" Background="Transparent" BorderThickness="0" FontSize="14" Padding="2,0" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="Ingrese la ocupación o profesión" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
+                                    <TextBlock Text="Ingrese la ocupación o profesión" Foreground="{DynamicResource PlaceholderTextBrush}" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -245,39 +245,39 @@
                         <!-- FILA 5: Género y Estado Civil -->
                         <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                <TextBlock Text="⚧" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="⚧" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Género" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <RadioButton x:Name="rbMasculino" Content="Masculino" GroupName="Genero" Margin="0,0,25,0" FontSize="14" Foreground="{StaticResource TextDarkBrush}" Cursor="Hand"/>
-                                <RadioButton x:Name="rbFemenino" Content="Femenino" GroupName="Genero" Margin="0,0,25,0" FontSize="14" Foreground="{StaticResource TextDarkBrush}" Cursor="Hand"/>
-                                <RadioButton x:Name="rbOtro" Content="Otro" GroupName="Genero" FontSize="14" Foreground="{StaticResource TextDarkBrush}" Cursor="Hand"/>
+                                <RadioButton x:Name="rbMasculino" Content="Masculino" GroupName="Genero" Margin="0,0,25,0" FontSize="14" Foreground="{DynamicResource TextDarkBrush}" Cursor="Hand"/>
+                                <RadioButton x:Name="rbFemenino" Content="Femenino" GroupName="Genero" Margin="0,0,25,0" FontSize="14" Foreground="{DynamicResource TextDarkBrush}" Cursor="Hand"/>
+                                <RadioButton x:Name="rbOtro" Content="Otro" GroupName="Genero" FontSize="14" Foreground="{DynamicResource TextDarkBrush}" Cursor="Hand"/>
                             </StackPanel>
                         </StackPanel>
 
                         <StackPanel Grid.Row="4" Grid.Column="2" Margin="0,0,0,18">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                <TextBlock Text="💍" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="💍" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Estado Civil" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <WrapPanel Orientation="Horizontal">
-                                <RadioButton x:Name="rbSoltero" Content="Soltero/a" GroupName="EstadoCivil" Margin="0,0,20,4" FontSize="14" Foreground="{StaticResource TextDarkBrush}" Cursor="Hand"/>
-                                <RadioButton x:Name="rbCasado" Content="Casado/a" GroupName="EstadoCivil" Margin="0,0,20,4" FontSize="14" Foreground="{StaticResource TextDarkBrush}" Cursor="Hand"/>
-                                <RadioButton x:Name="rbDivorciado" Content="Divorciado/a" GroupName="EstadoCivil" Margin="0,0,20,4" FontSize="14" Foreground="{StaticResource TextDarkBrush}" Cursor="Hand"/>
-                                <RadioButton x:Name="rbViudo" Content="Viudo/a" GroupName="EstadoCivil" FontSize="14" Foreground="{StaticResource TextDarkBrush}" Cursor="Hand"/>
+                                <RadioButton x:Name="rbSoltero" Content="Soltero/a" GroupName="EstadoCivil" Margin="0,0,20,4" FontSize="14" Foreground="{DynamicResource TextDarkBrush}" Cursor="Hand"/>
+                                <RadioButton x:Name="rbCasado" Content="Casado/a" GroupName="EstadoCivil" Margin="0,0,20,4" FontSize="14" Foreground="{DynamicResource TextDarkBrush}" Cursor="Hand"/>
+                                <RadioButton x:Name="rbDivorciado" Content="Divorciado/a" GroupName="EstadoCivil" Margin="0,0,20,4" FontSize="14" Foreground="{DynamicResource TextDarkBrush}" Cursor="Hand"/>
+                                <RadioButton x:Name="rbViudo" Content="Viudo/a" GroupName="EstadoCivil" FontSize="14" Foreground="{DynamicResource TextDarkBrush}" Cursor="Hand"/>
                             </WrapPanel>
                         </StackPanel>
 
                         <!-- FILA 6: Dirección -->
                         <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="🏠" Foreground="{StaticResource PrimaryBlueBrush}"/>
+                                <TextBlock Text="🏠" Foreground="{DynamicResource PrimaryBlueBrush}"/>
                                 <TextBlock Text="Dirección de Domicilio" Style="{StaticResource LabelStyle}"/>
                             </StackPanel>
                             <Border Style="{StaticResource InputBorderStyle}">
                                 <Grid>
                                     <TextBox x:Name="txtDireccion" Background="Transparent" BorderThickness="0" FontSize="14" Padding="2,0" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="Ingrese la dirección completa" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
+                                    <TextBlock Text="Ingrese la dirección completa" Foreground="{DynamicResource PlaceholderTextBrush}" FontSize="14" VerticalAlignment="Center" Margin="4,0,0,0" IsHitTestVisible="False">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -296,7 +296,7 @@
 
                     <!-- SEPARADOR Y BOTONES -->
                     <StackPanel Grid.Row="2" Margin="0,15,0,0">
-                        <Separator Background="{StaticResource BorderCardBrush}" Margin="0,0,0,18"/>
+                        <Separator Background="{DynamicResource BorderCardBrush}" Margin="0,0,0,18"/>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button x:Name="btnCancelar" Content="Cancelar"

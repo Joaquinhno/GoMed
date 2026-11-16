@@ -12,7 +12,6 @@ namespace GoMed
 {
     public partial class MainWindow : Window
     {
-        // Pila de navegación para flujos Maestro -> Detalle / Edición
         private readonly Stack<(UserControl Vista, string Titulo, Button? BotonSidebar)> _historialNavegacion = new();
         private Button? _botonSidebarActual;
 
@@ -23,22 +22,42 @@ namespace GoMed
             InitializeComponent();
             Application.Current.MainWindow = this;
 
-            // Cargamos el nombre del médico desde la sesión
             lblNombreDoctor.Text = string.IsNullOrWhiteSpace(SesionUsuario.NombreCompleto)
                 ? "Dr. Daniel Infante"
                 : $"Dr. {SesionUsuario.NombreCompleto}";
 
             MarcarBotonSidebarActivo(btnNavInicio);
+            ActualizarIndicadorTema();
         }
+
+        #region MODO OSCURO / CLARO
+
+        private void BtnTema_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            App.AlternarTema();
+            ActualizarIndicadorTema();
+        }
+
+        private void ActualizarIndicadorTema()
+        {
+            if (App.EsModoOscuro)
+            {
+                lblIconoTema.Text = "☀️";
+                lblTextoTema.Text = " Claro";
+            }
+            else
+            {
+                lblIconoTema.Text = "🌙";
+                lblTextoTema.Text = " Oscuro";
+            }
+        }
+
+        #endregion
 
         #region MOTOR DE NAVEGACIÓN UNIFICADO (SHELL)
 
-        /// <summary>
-        /// Navega a un UserControl dentro del área de contenido principal.
-        /// </summary>
         public void NavegarA(UserControl nuevaVista, string tituloSeccion, Button? botonSidebar = null, bool guardarEnHistorial = false)
         {
-            // Si estamos saliendo de CargarConsultaWindow y no vamos a volver a ella, aseguramos apagar el servidor QR
             if (!guardarEnHistorial && MainContent.Content is CargarConsultaWindow consultaActual)
             {
                 consultaActual.DetenerServidorWeb();
@@ -66,9 +85,6 @@ namespace GoMed
             }
         }
 
-        /// <summary>
-        /// Regresa a la vista anterior en la pila de navegación o al Inicio si la pila está vacía.
-        /// </summary>
         public void Volver()
         {
             if (MainContent.Content is CargarConsultaWindow consultaActual)
@@ -80,7 +96,6 @@ namespace GoMed
             {
                 var (vistaPrevia, tituloPrevio, botonPrevio) = _historialNavegacion.Pop();
 
-                // Si la vista previa es un listado, refrescamos sus datos por si hubo altas/ediciones/bajas
                 if (vistaPrevia is VisualizarPacientesWindow listadoPacientes)
                 {
                     listadoPacientes.RefrescarDatos();
@@ -108,9 +123,6 @@ namespace GoMed
             }
         }
 
-        /// <summary>
-        /// Muestra el Dashboard principal de Inicio.
-        /// </summary>
         public void IrAInicio()
         {
             if (MainContent.Content is CargarConsultaWindow consultaActual)
@@ -156,9 +168,6 @@ namespace GoMed
             _botonSidebarActual = botonActivo;
         }
 
-        /// <summary>
-        /// Conservado por compatibilidad con llamadas desde CargarConsultaWindow.BtnPacientes_Click
-        /// </summary>
         public void AbrirSubMenuPacientes()
         {
             NavegarA(new VisualizarPacientesWindow(), "Pacientes — Listado General", btnNavPacientes, false);
@@ -169,10 +178,8 @@ namespace GoMed
         #region EVENTOS DEL SIDEBAR Y DASHBOARD
 
         private void BtnNavInicio_Click(object sender, RoutedEventArgs e) => IrAInicio();
-
         private void BtnVolver_Click(object sender, RoutedEventArgs e) => Volver();
 
-        // Tarjetas del Dashboard de Inicio (navegan directo a la vista principal de cada módulo)
         private void BtnPacientes_Click(object sender, RoutedEventArgs e)
         {
             NavegarA(new VisualizarPacientesWindow(), "Pacientes — Listado General", btnNavPacientes, false);
@@ -188,7 +195,6 @@ namespace GoMed
             NavegarA(new VerConsultasWindow(), "Consultas — Historial de Atenciones", btnNavConsultas, false);
         }
 
-        // Acciones de Pacientes
         public void BtnAgregarPaciente_Click(object sender, RoutedEventArgs e)
         {
             NavegarA(new CargarPacienteWindow(), "Pacientes — Nuevo Paciente", btnNavNuevoPaciente, false);
@@ -209,7 +215,6 @@ namespace GoMed
             NavegarA(new VerFichaPacienteWindow(pacienteId), "Historia Clínica — Revisión de Ficha", btnNavFichaVer, guardarEnHistorial: true);
         }
 
-        // Acciones de Ficha Clínica
         public void BtnAgregarFicha_Click(object sender, RoutedEventArgs e)
         {
             NavegarA(new FichaClinicaWindow(), "Historia Clínica — Editar Ficha", btnNavFichaEditar, false);
@@ -227,7 +232,6 @@ namespace GoMed
             }
         }
 
-        // Acciones de Consultas
         public void BtnAgregarConsulta_Click(object sender, RoutedEventArgs e)
         {
             NavegarA(new CargarConsultaWindow(), "Consultas — Nueva Consulta", btnNavNuevaConsulta, false);
@@ -250,7 +254,6 @@ namespace GoMed
             NavegarA(new DetalleConsultaWindow(consultaId), "Consultas — Detalle de Atención", btnNavConsultas, guardarEnHistorial: true);
         }
 
-        // Acciones de Recetas
         private void BtnAbrirRecetas_Click(object sender, RoutedEventArgs e)
         {
             NavegarA(new GenerarRecetaWindow(), "Prescripciones — Generar Receta Médica", btnNavRecetas, false);
@@ -258,7 +261,7 @@ namespace GoMed
 
         #endregion
 
-        #region RESPALDO Y RESTAURACIÓN DE BASE DE DATOS (INTACTO)
+        #region RESPALDO Y RESTAURACIÓN DE BASE DE DATOS
 
         private void BtnBackup_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -356,7 +359,6 @@ namespace GoMed
 
                     ZipFile.ExtractToDirectory(archivoZip, carpetaTemp);
 
-                    // Liberar la base de datos antes de sobrescribir
                     Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
                     GC.Collect();
                     GC.WaitForPendingFinalizers();

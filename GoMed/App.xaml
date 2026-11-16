@@ -6,7 +6,7 @@
 
     <Application.Resources>
         <ResourceDictionary>
-            <!-- PALETA DE COLORES OFICIAL GOMED -->
+            <!-- PALETA DE COLORES BASE Y SEMÁNTICA (DINÁMICA PARA MODO CLARO / OSCURO) -->
             <Color x:Key="PrimaryBlueColor">#007BFF</Color>
             <SolidColorBrush x:Key="PrimaryBlueBrush" Color="#007BFF"/>
             <SolidColorBrush x:Key="SuccessBrush" Color="#28A745"/>
@@ -14,12 +14,21 @@
             <SolidColorBrush x:Key="WarningBrush" Color="#FFC107"/>
             <SolidColorBrush x:Key="WarningBgBrush" Color="#FFF3CD"/>
             <SolidColorBrush x:Key="WarningTextBrush" Color="#856404"/>
+
+            <!-- Pinceles Dinámicos que cambian al alternar el tema -->
+            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F8F9FA"/>
+            <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="SurfaceAltBrush" Color="#FAFAFA"/>
+            <SolidColorBrush x:Key="InputBackgroundBrush" Color="#FFFFFF"/>
             <SolidColorBrush x:Key="TextDarkBrush" Color="#2C3E50"/>
             <SolidColorBrush x:Key="TextSecondaryBrush" Color="#7F8C8D"/>
             <SolidColorBrush x:Key="TextLightBrush" Color="#666666"/>
+            <SolidColorBrush x:Key="PlaceholderTextBrush" Color="#94A3B8"/>
             <SolidColorBrush x:Key="BorderLightBrush" Color="#CED4DA"/>
             <SolidColorBrush x:Key="BorderCardBrush" Color="#E0E0E0"/>
-            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F8F9FA"/>
+            <SolidColorBrush x:Key="GridLineBrush" Color="#F0F0F0"/>
+            <SolidColorBrush x:Key="RowHoverBrush" Color="#F8F9FA"/>
+            <SolidColorBrush x:Key="RowSelectedBrush" Color="#E8F4FF"/>
             <SolidColorBrush x:Key="CancelButtonBrush" Color="#F8F9FA"/>
             <SolidColorBrush x:Key="CancelButtonBorderBrush" Color="#6C757D"/>
             <SolidColorBrush x:Key="SidebarTextBrush" Color="#495057"/>
@@ -29,10 +38,11 @@
 
             <!-- ESTILOS BASE DE INPUTS -->
             <Style TargetType="TextBox">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+                <Setter Property="CaretBrush" Value="{DynamicResource TextDarkBrush}"/>
                 <Setter Property="Padding" Value="10,8"/>
                 <Setter Property="FontSize" Value="14"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -48,10 +58,11 @@
             </Style>
 
             <Style TargetType="PasswordBox">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+                <Setter Property="CaretBrush" Value="{DynamicResource TextDarkBrush}"/>
                 <Setter Property="Padding" Value="10,8"/>
                 <Setter Property="FontSize" Value="14"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -67,17 +78,39 @@
             </Style>
 
             <Style TargetType="ComboBox">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
                 <Setter Property="Padding" Value="10,8"/>
                 <Setter Property="FontSize" Value="14"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Style.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="{Binding Color, Source={StaticResource InputBackgroundBrush}}"/>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="{Binding Color, Source={StaticResource TextDarkBrush}}"/>
+                </Style.Resources>
+            </Style>
+
+            <Style TargetType="ComboBoxItem">
+                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+                <Setter Property="Padding" Value="8,6"/>
+            </Style>
+
+            <Style TargetType="DatePicker">
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Style>
+
+            <Style TargetType="DatePickerTextBox">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
+                <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
 
             <Style TargetType="Label">
-                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="FontSize" Value="14"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
@@ -86,23 +119,23 @@
 
             <!-- ESTILO DE TARJETA COMPARTIDO (GoMedCardStyle) -->
             <Style x:Key="GoMedCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="White"/>
+                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
                 <Setter Property="CornerRadius" Value="15"/>
                 <Setter Property="Padding" Value="25"/>
                 <Setter Property="Margin" Value="0,0,0,20"/>
                 <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderCardBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderCardBrush}"/>
                 <Setter Property="Effect">
                     <Setter.Value>
-                        <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05" Color="Black"/>
+                        <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.06" Color="Black"/>
                     </Setter.Value>
                 </Setter>
             </Style>
 
             <Style x:Key="InputBorderStyle" TargetType="Border">
-                <Setter Property="Background" Value="White"/>
+                <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
                 <Setter Property="CornerRadius" Value="6"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderLightBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Height" Value="38"/>
                 <Setter Property="Padding" Value="10,0"/>
@@ -111,18 +144,18 @@
             <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="18"/>
                 <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
             </Style>
 
             <Style x:Key="ViewTitleStyle" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="28"/>
                 <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
             </Style>
 
             <Style x:Key="ViewSubtitleStyle" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="15"/>
-                <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                 <Setter Property="Margin" Value="2,4,0,0"/>
             </Style>
 
@@ -153,27 +186,27 @@
             </Style>
 
             <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
-                <Setter Property="Background" Value="{StaticResource PrimaryBlueBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlueBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource PrimaryBlueBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBlueBrush}"/>
                 <Setter Property="Foreground" Value="White"/>
             </Style>
 
             <Style x:Key="SaveButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
-                <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource SuccessBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
                 <Setter Property="Foreground" Value="White"/>
             </Style>
 
             <Style x:Key="CancelButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
-                <Setter Property="Background" Value="{StaticResource CancelButtonBrush}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource CancelButtonBorderBrush}"/>
-                <Setter Property="Foreground" Value="{StaticResource CancelButtonBorderBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource CancelButtonBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource CancelButtonBorderBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextDarkBrush}"/>
             </Style>
 
             <!-- ESTILOS DEL SIDEBAR LATERAL -->
             <Style x:Key="SidebarButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="Foreground" Value="{StaticResource SidebarTextBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource SidebarTextBrush}"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
                 <Setter Property="Padding" Value="14,11"/>
@@ -188,7 +221,7 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="{StaticResource SidebarBackgroundHoverBrush}"/>
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource SidebarBackgroundHoverBrush}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -197,8 +230,8 @@
             </Style>
 
             <Style x:Key="SidebarButtonActiveStyle" BasedOn="{StaticResource SidebarButtonStyle}" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource SidebarBackgroundActiveBrush}"/>
-                <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource SidebarBackgroundActiveBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryBlueBrush}"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
             </Style>
 
@@ -241,22 +274,21 @@
 
             <!-- TARJETA ANIMADA DE INICIO (DashboardButtonStyle) -->
             <Style x:Key="DashboardButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="White"/>
+                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderCardBrush}"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="CardBorder" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
                                     CornerRadius="15" Margin="15" Width="280" Height="190"
                                     BorderThickness="2" RenderTransformOrigin="0.5,0.5">
-                                <Border.BorderBrush>
-                                    <SolidColorBrush Color="#EEEEEE"/>
-                                </Border.BorderBrush>
                                 <Border.RenderTransform>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>
                                 </Border.RenderTransform>
                                 <Border.Effect>
-                                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05" Color="Black"/>
+                                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.06" Color="Black"/>
                                 </Border.Effect>
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -266,8 +298,7 @@
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.04" Duration="0:0:0.2" />
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.04" Duration="0:0:0.2" />
-                                            <ColorAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" To="#007BFF" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0.12" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0.14" Duration="0:0:0.2"/>
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" To="25" Duration="0:0:0.2"/>
                                         </Storyboard>
                                     </BeginStoryboard>
@@ -277,14 +308,16 @@
                                         <Storyboard>
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.2" />
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.2" />
-                                            <ColorAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" To="#EEEEEE" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0.05" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0.06" Duration="0:0:0.2"/>
                                             <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" To="15" Duration="0:0:0.2"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="CardBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBlueBrush}"/>
+                                </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="CardBorder" Property="Background" Value="#F1F8FF"/>
+                                    <Setter TargetName="CardBorder" Property="Background" Value="{DynamicResource LightBlueHover}"/>
                                     <Setter TargetName="CardBorder" Property="RenderTransform">
                                         <Setter.Value>
                                             <ScaleTransform ScaleX="0.97" ScaleY="0.97"/>

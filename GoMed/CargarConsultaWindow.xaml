@@ -1,11 +1,10 @@
 ﻿<UserControl x:Class="GoMed.CargarConsultaWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="{StaticResource AppBackgroundBrush}"
+             Background="{DynamicResource AppBackgroundBrush}"
              Unloaded="UserControl_Unloaded">
 
     <Grid>
-        <!-- FORMULARIO PRINCIPAL -->
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid Margin="40,30" MaxWidth="1100">
                 <Grid.RowDefinitions>
@@ -13,13 +12,11 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- ENCABEZADO FORMULARIO -->
                 <StackPanel Grid.Row="0" Margin="0,0,0,25">
                     <TextBlock Text="Registro de Consulta Médica" Style="{StaticResource ViewTitleStyle}"/>
                     <TextBlock Text="Complete los campos detallados a continuación y adjunte fotografías si corresponde" Style="{StaticResource ViewSubtitleStyle}"/>
                 </StackPanel>
 
-                <!-- TARJETAS -->
                 <StackPanel Grid.Row="1">
 
                     <!-- TARJETA 1: PACIENTE Y FECHA -->
@@ -33,7 +30,7 @@
 
                             <StackPanel Grid.Column="0">
                                 <Label Content="Paciente (Nombre o DNI)"/>
-                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="5">
+                                <Border Background="{DynamicResource InputBackgroundBrush}" CornerRadius="8" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" Padding="5">
                                     <ComboBox x:Name="cmbPaciente" IsEditable="True"
                                               Background="Transparent" BorderThickness="0"
                                               Padding="5" VerticalContentAlignment="Center"
@@ -41,12 +38,12 @@
                                               SelectedValuePath="PacienteID"
                                               SelectionChanged="CmbPaciente_SelectionChanged"/>
                                 </Border>
-                                <TextBlock x:Name="lblEdad" FontSize="15" Foreground="{StaticResource PrimaryBlueBrush}" FontWeight="SemiBold" Margin="5,8,0,0" Text="-- años"/>
+                                <TextBlock x:Name="lblEdad" FontSize="15" Foreground="{DynamicResource PrimaryBlueBrush}" FontWeight="SemiBold" Margin="5,8,0,0" Text="-- años"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="2">
                                 <Label Content="Fecha de la Atención"/>
-                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="5">
+                                <Border Background="{DynamicResource InputBackgroundBrush}" CornerRadius="8" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" Padding="5">
                                     <DatePicker x:Name="dpFechaConsulta" Background="Transparent" BorderThickness="0" Padding="5" VerticalContentAlignment="Center"/>
                                 </Border>
                             </StackPanel>
@@ -62,19 +59,17 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- IZQUIERDA: Motivo -->
                             <StackPanel Grid.Column="0">
-                                <Label Content="Motivo de Consulta" Foreground="{StaticResource PrimaryBlueBrush}"/>
-                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="8" Margin="0,5,0,0">
+                                <Label Content="Motivo de Consulta" Foreground="{DynamicResource PrimaryBlueBrush}"/>
+                                <Border Background="{DynamicResource InputBackgroundBrush}" CornerRadius="8" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" Padding="8" Margin="0,5,0,0">
                                     <TextBox x:Name="txtMotivo" Height="175" TextWrapping="Wrap" AcceptsReturn="True"
-                                             VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" BorderThickness="0" FontSize="14"/>
+                                             Background="Transparent" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" BorderThickness="0" FontSize="14"/>
                                 </Border>
                             </StackPanel>
 
-                            <!-- DERECHA: Diagnóstico y Plan -->
                             <StackPanel Grid.Column="2">
                                 <Label Content="Diagnóstico Principal"/>
-                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="2" Margin="0,5,0,15">
+                                <Border Background="{DynamicResource InputBackgroundBrush}" CornerRadius="8" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" Padding="2" Margin="0,5,0,15">
                                     <ComboBox x:Name="cmbDiagnostico" IsEditable="True"
                                               Background="Transparent" BorderThickness="0" FontSize="14" Padding="5"
                                               StaysOpenOnEdit="True"
@@ -83,9 +78,9 @@
                                 </Border>
 
                                 <Label Content="Plan de Tratamiento / Indicaciones"/>
-                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="8" Margin="0,5,0,0">
+                                <Border Background="{DynamicResource InputBackgroundBrush}" CornerRadius="8" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" Padding="8" Margin="0,5,0,0">
                                     <TextBox x:Name="txtPlan" Height="85" TextWrapping="Wrap" AcceptsReturn="True"
-                                             VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" BorderThickness="0" FontSize="14"/>
+                                             Background="Transparent" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" BorderThickness="0" FontSize="14"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -95,15 +90,15 @@
                     <Border Style="{StaticResource GoMedCardStyle}">
                         <StackPanel>
                             <Label Content="Registro Fotográfico"/>
-                            <Border Background="#FAFAFA" CornerRadius="10" BorderBrush="#EEE" BorderThickness="1" Margin="0,5">
+                            <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="10" BorderBrush="{DynamicResource BorderCardBrush}" BorderThickness="1" Margin="0,5">
                                 <ListBox x:Name="lstFotosAdjuntadas" Height="140" SelectionMode="Single" Background="Transparent" BorderThickness="0" Padding="10">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Margin="5">
-                                                <Border BorderBrush="#DDD" BorderThickness="1" Width="70" Height="55" CornerRadius="8" ClipToBounds="True">
+                                                <Border BorderBrush="{DynamicResource BorderCardBrush}" BorderThickness="1" Width="70" Height="55" CornerRadius="8" ClipToBounds="True">
                                                     <Image Source="{Binding}" Stretch="UniformToFill"/>
                                                 </Border>
-                                                <TextBlock Text="{Binding}" VerticalAlignment="Center" Margin="15,0,0,0" FontSize="12" Foreground="{StaticResource TextLightBrush}"/>
+                                                <TextBlock Text="{Binding}" VerticalAlignment="Center" Margin="15,0,0,0" FontSize="12" Foreground="{DynamicResource TextLightBrush}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -113,8 +108,8 @@
                             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
                                 <Button x:Name="BtnAdjuntarFoto" Content="📷 Adjuntar PC" Click="BtnAdjuntarFoto_Click"
                                         Style="{StaticResource BaseButtonStyle}"
-                                        Background="{StaticResource LightBlueHover}" Foreground="{StaticResource PrimaryBlueBrush}"
-                                        BorderBrush="{StaticResource PrimaryBlueBrush}"/>
+                                        Background="{DynamicResource LightBlueHover}" Foreground="{DynamicResource PrimaryBlueBrush}"
+                                        BorderBrush="{DynamicResource PrimaryBlueBrush}"/>
 
                                 <Button x:Name="BtnSubirDesdeTelefono" Content="📱 Usar Celular" Click="BtnSubirDesdeTelefono_Click"
                                         Style="{StaticResource SaveButtonStyle}" Margin="10,0,0,0"/>
@@ -141,20 +136,23 @@
 
         <!-- OVERLAY DEL CÓDIGO QR -->
         <Grid x:Name="OverlayQR" Background="#99000000" Visibility="Collapsed" Panel.ZIndex="100">
-            <Border Background="White" Width="380" Height="480" CornerRadius="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderCardBrush}" BorderThickness="1" Width="380" Height="490" CornerRadius="20" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <StackPanel Margin="30">
-                    <TextBlock Text="📱 Conectar Celular" FontSize="24" FontWeight="Bold" Foreground="#2C3E50" HorizontalAlignment="Center"/>
-                    <TextBlock Text="1. Conecta tu celular al mismo Wi-Fi." FontSize="14" Foreground="#666" Margin="0,10,0,0" HorizontalAlignment="Center"/>
-                    <TextBlock Text="2. Escanea este código con tu cámara." FontSize="14" Foreground="#666" HorizontalAlignment="Center"/>
+                    <TextBlock Text="📱 Conectar Celular" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextDarkBrush}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="1. Conecta tu celular al mismo Wi-Fi." FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+                    <TextBlock Text="2. Escanea este código con tu cámara." FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
 
-                    <Image x:Name="imgQR" Width="220" Height="220" Margin="0,20"/>
+                    <!-- Fondo blanco detrás del QR para que las cámaras lo lean perfectamente incluso en modo oscuro -->
+                    <Border Background="White" CornerRadius="12" Padding="8" Width="226" Height="226" Margin="0,15" HorizontalAlignment="Center">
+                        <Image x:Name="imgQR" Width="210" Height="210"/>
+                    </Border>
 
-                    <TextBlock x:Name="lblFotosRecibidas" Text="Esperando fotos..." FontSize="18" Foreground="#007BFF" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="lblFotosRecibidas" Text="Esperando fotos..." FontSize="18" Foreground="{DynamicResource PrimaryBlueBrush}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
 
                     <Button Content="Terminar y Cerrar" Click="BtnCerrarQR_Click"
                             Style="{StaticResource BaseButtonStyle}"
                             Background="#DC3545" BorderBrush="#DC3545" Foreground="White"
-                            Margin="0,25,0,0" FontSize="16"/>
+                            Margin="0,20,0,0" FontSize="16"/>
                 </StackPanel>
             </Border>
         </Grid>
