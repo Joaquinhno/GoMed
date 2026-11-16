@@ -14,29 +14,24 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
-
 namespace GoMed
 {
-    public partial class CargarConsultaWindow : Window
+    public partial class CargarConsultaWindow : UserControl
     {
-        //variable para el listener HTTP que recibirá las fotos desde el celular//
-        private HttpListener _httpListener;
+        private HttpListener? _httpListener;
         private bool _isListening;
         private int _fotosRecibidasTemp = 0;
 
-        // CORRECCIÓN: Inicializamos la lista para evitar la advertencia CS8618
         private System.Collections.IList listaPacientes = new List<object>();
-
         private List<string> _rutasFotosSeleccionadas = new List<string>();
         private int _medicoId;
 
-        // CORRECCIÓN: Constructor sin parámetros para que funcione con MainWindow
         public CargarConsultaWindow()
         {
             InitializeComponent();
 
-            // Tomamos el ID del médico directamente de la sesión global
             _medicoId = SesionUsuario.MedicoID;
+            dpFechaConsulta.SelectedDate = DateTime.Today;
 
             CargarPacientes();
             cmbDiagnostico.ItemsSource = ListasEstaticas.Diagnosticos;
@@ -48,7 +43,6 @@ namespace GoMed
             {
                 using (var context = new GoMed.Data.AppContext())
                 {
-                    // Filtramos pacientes que pertenezcan al médico actual
                     listaPacientes = context.Pacientes
                         .Where(p => p.MedicoID == _medicoId)
                         .Select(p => new
@@ -87,15 +81,10 @@ namespace GoMed
             {
                 PacienteID = (int)cmbPaciente.SelectedValue,
                 MedicoID = _medicoId,
-                Fecha = DateTime.Now,
+                Fecha = dpFechaConsulta.SelectedDate ?? DateTime.Now,
                 MotivoConsulta = txtMotivo.Text,
-
-                // Extraemos el texto del ComboBox (ya sea elegido o escrito)
                 Diagnostico = cmbDiagnostico.Text,
-
-                // Guardamos el nuevo campo
                 PlanTratamiento = txtPlan.Text,
-
                 RutaFoto = null
             };
 
@@ -121,8 +110,9 @@ namespace GoMed
                     }
                 }
 
+                DetenerServidorWeb();
                 MessageBox.Show("Consulta y fotos guardadas exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                this.Close();
+                MainWindow.Instance?.BtnVisualizarConsultas_Click(this, new RoutedEventArgs());
             }
             catch (Exception ex)
             {
@@ -138,9 +128,11 @@ namespace GoMed
 
         private void BtnAdjuntarFoto_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Multiselect = true;
-            openFileDialog.Filter = "Archivos de imagen|*.jpg;*.jpeg;*.png;*.gif";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Multiselect = true,
+                Filter = "Archivos de imagen|*.jpg;*.jpeg;*.png;*.gif"
+            };
 
             if (openFileDialog.ShowDialog() == true)
             {
@@ -148,13 +140,13 @@ namespace GoMed
                 {
                     try
                     {
-                        string nombreArchivo = System.IO.Path.GetFileName(origenRuta);
-                        string carpetaDestino = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FotosConsultas");
+                        string nombreArchivo = Path.GetFileName(origenRuta);
+                        string carpetaDestino = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FotosConsultas");
 
                         if (!Directory.Exists(carpetaDestino)) Directory.CreateDirectory(carpetaDestino);
 
-                        string nombreArchivoUnico = $"{Guid.NewGuid().ToString()}_{nombreArchivo}";
-                        string destinoRuta = System.IO.Path.Combine(carpetaDestino, nombreArchivoUnico);
+                        string nombreArchivoUnico = $"{Guid.NewGuid()}_{nombreArchivo}";
+                        string destinoRuta = Path.Combine(carpetaDestino, nombreArchivoUnico);
 
                         File.Copy(origenRuta, destinoRuta, true);
                         _rutasFotosSeleccionadas.Add(destinoRuta);
@@ -200,33 +192,39 @@ namespace GoMed
             if (fechaNacimiento.Date > hoy.AddYears(-edad)) edad--;
             lblEdad.Text = $"{edad} años";
         }
- 
-        private void BtnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
-        private void BtnVolverInicio_Click(object sender, RoutedEventArgs e) => this.Close();
+
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e)
+        {
+            DetenerServidorWeb();
+            MainWindow.Instance?.Volver();
+        }
+
+        private void BtnVolverInicio_Click(object sender, RoutedEventArgs e)
+        {
+            DetenerServidorWeb();
+            MainWindow.Instance?.IrAInicio();
+        }
 
         private void BtnPacientes_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Verificamos si la ventana que abrió esta consulta fue el MainWindow
-            if (this.Owner is MainWindow ventanaPrincipal)
-            {
-                // 2. Le ordenamos al MainWindow que cambie su vista al SubMenú de Pacientes
-                ventanaPrincipal.AbrirSubMenuPacientes();
-            }
+            DetenerServidorWeb();
+            MainWindow.Instance?.AbrirSubMenuPacientes();
+        }
 
-            // 3. Cerramos la ventana de Cargar Consulta
-            this.Close();
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            DetenerServidorWeb();
         }
 
         #region CONEXIÓN CON CELULAR (SERVIDOR LOCAL)
+
         private async void BtnSubirDesdeTelefono_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // 1. Obtenemos la IP de la computadora
                 string ipLocal = ObtenerIpLocal();
                 string url = $"http://{ipLocal}:8080/";
 
-                // 2. Generamos el Código QR
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
                 PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
@@ -242,7 +240,6 @@ namespace GoMed
                 }
                 imgQR.Source = qrImage;
 
-                // 3. Mostramos la pantalla y arrancamos el servidor
                 _fotosRecibidasTemp = 0;
                 lblFotosRecibidas.Text = "Esperando fotos...";
                 OverlayQR.Visibility = Visibility.Visible;
@@ -265,20 +262,17 @@ namespace GoMed
         {
             try
             {
-                // Este truco abre una conexión de prueba hacia internet (Google) 
-                // para descubrir cuál es la tarjeta de red real que usa tu Wi-Fi.
                 using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
                 {
                     socket.Connect("8.8.8.8", 65530);
-                    IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-                    return endPoint.Address.ToString();
+                    IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
+                    return endPoint?.Address.ToString() ?? "127.0.0.1";
                 }
             }
             catch
             {
                 return "127.0.0.1";
             }
-
         }
 
         private async Task IniciarServidorWeb(string url)
@@ -300,7 +294,6 @@ namespace GoMed
 
                     if (request.HttpMethod == "GET")
                     {
-                        // Esta es la página web que verá el doctor en su celular (Diseñada para móviles)
                         string html = @"
                         <!DOCTYPE html>
                         <html lang='es'>
@@ -311,15 +304,9 @@ namespace GoMed
                             <style>
                                 :root { --primary: #007BFF; --bg: #f4f7f6; --text: #2C3E50; }
                                 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); }
-                                
-                                /* Encabezado */
                                 .header { background: #fff; padding: 20px; text-align: center; box-shadow: 0 2px 15px rgba(0,0,0,0.05); font-size: 22px; font-weight: 800; color: var(--primary); }
-                                
-                                /* Contenedor Principal */
                                 .container { padding: 25px 20px; text-align: center; }
                                 .instructions { font-size: 15px; color: #666; margin-bottom: 25px; line-height: 1.5; font-weight: 500; }
-                                
-                                /* Botón de Cámara Premium */
                                 .btn-camera { 
                                     background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%); 
                                     color: white; border: none; border-radius: 50px; 
@@ -330,27 +317,20 @@ namespace GoMed
                                 }
                                 .btn-camera:active { transform: scale(0.95); }
                                 input[type=file] { display: none; }
-                                
-                                /* Galería de miniaturas */
                                 .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
                                 .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); position: relative; animation: fadeIn 0.4s ease-out; }
                                 .card img { width: 100%; height: 140px; object-fit: cover; display: block; }
-                                
-                                /* Etiquetas de estado */
                                 .status-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; backdrop-filter: blur(4px); }
                                 .status-badge.success { background: rgba(40, 167, 69, 0.9); }
                                 .status-badge.error { background: rgba(220, 53, 69, 0.9); }
                                 .status-badge.loading { background: rgba(255, 193, 7, 0.9); color: #000; }
-                                
                                 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
                             </style>
                         </head>
                         <body>
                             <div class='header'>⚕ GoMed Móvil</div>
-                            
                             <div class='container'>
                                 <p class='instructions'>Toca el botón seleccionar las fotos. Se enviarán al instante a tu computadora.</p>
-                                
                                 <label class='btn-camera'>
                                     <svg width='26' height='26' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
                                         <path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'></path>
@@ -359,43 +339,29 @@ namespace GoMed
                                     Subir Fotografías
                                     <input type='file' id='fileInput' multiple accept='image/*' onchange='handleFiles(this.files)'>
                                 </label>
-
                                 <div class='gallery' id='gallery'></div>
                             </div>
-
                             <script>
                                 async function handleFiles(files) {
                                     const gallery = document.getElementById('gallery');
-                                    
-                                    // Procesamos cada foto seleccionada o tomada
                                     for(let i = 0; i < files.length; i++) {
                                         let file = files[i];
                                         let cardId = 'card_' + Math.random().toString(36).substr(2, 9);
-                                        
-                                        // 1. Crear miniatura local para que el doc vea qué foto sacó
                                         let url = URL.createObjectURL(file);
-                                        
-                                        // 2. Crear la 'Tarjeta' visual
                                         let cardHTML = `
                                             <div class='card' id='${cardId}'>
                                                 <div class='status-badge loading' id='badge_${cardId}'>⏳ Subiendo...</div>
                                                 <img src='${url}'>
                                             </div>`;
-                                        
-                                        // Agregar al principio de la galería
                                         gallery.insertAdjacentHTML('afterbegin', cardHTML);
-                                        
-                                        // 3. Subir la foto
                                         await uploadFile(file, cardId);
                                     }
                                 }
-
                                 async function uploadFile(file, cardId) {
                                     let reader = new FileReader();
                                     reader.onload = async function(e) {
                                         let base64 = e.target.result.split(',')[1]; 
                                         let badge = document.getElementById('badge_' + cardId);
-                                        
                                         try {
                                             let response = await fetch('/upload', { method: 'POST', body: base64 });
                                             if(response.ok) {
@@ -421,21 +387,19 @@ namespace GoMed
                         await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
                         response.Close();
                     }
-                    else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/upload")
+                    else if (request.HttpMethod == "POST" && request.Url?.AbsolutePath == "/upload")
                     {
-                        // 4. El celular envió una foto, la guardamos
                         using (StreamReader reader = new StreamReader(request.InputStream))
                         {
                             string base64Data = await reader.ReadToEndAsync();
                             byte[] imageBytes = Convert.FromBase64String(base64Data);
 
-                            string carpetaDestino = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FotosConsultas");
+                            string carpetaDestino = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FotosConsultas");
                             if (!Directory.Exists(carpetaDestino)) Directory.CreateDirectory(carpetaDestino);
 
-                            string rutaCompleta = System.IO.Path.Combine(carpetaDestino, $"{Guid.NewGuid()}.jpg");
+                            string rutaCompleta = Path.Combine(carpetaDestino, $"{Guid.NewGuid()}.jpg");
                             await File.WriteAllBytesAsync(rutaCompleta, imageBytes);
 
-                            // 5. Actualizamos la Interfaz Gráfica (En el hilo principal)
                             Dispatcher.Invoke(() =>
                             {
                                 _rutasFotosSeleccionadas.Add(rutaCompleta);
@@ -455,19 +419,33 @@ namespace GoMed
             }
         }
 
-        private void BtnCerrarQR_Click(object sender, RoutedEventArgs e)
+        public void DetenerServidorWeb()
         {
-            OverlayQR.Visibility = Visibility.Collapsed;
+            if (OverlayQR != null)
+            {
+                OverlayQR.Visibility = Visibility.Collapsed;
+            }
             _isListening = false;
             if (_httpListener != null)
             {
-                _httpListener.Stop();
-                _httpListener.Close();
-                _httpListener = null;
+                try
+                {
+                    _httpListener.Stop();
+                    _httpListener.Close();
+                }
+                catch { }
+                finally
+                {
+                    _httpListener = null;
+                }
             }
         }
 
-        #endregion
+        private void BtnCerrarQR_Click(object sender, RoutedEventArgs e)
+        {
+            DetenerServidorWeb();
+        }
 
+        #endregion
     }
 }

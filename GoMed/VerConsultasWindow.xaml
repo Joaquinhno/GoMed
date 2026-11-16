@@ -1,270 +1,139 @@
-﻿<Window x:Class="GoMed.VerConsultasWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Historial de Consultas" 
-        Height="700" Width="1050" 
-        MinHeight="650" MinWidth="950"
-        WindowStartupLocation="CenterScreen" Background="#F8F9FA">
+﻿<UserControl x:Class="GoMed.VerConsultasWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource AppBackgroundBrush}">
 
-    <!-- RECURSOS DEL SISTEMA DE DISEÑO GOMED -->
-    <Window.Resources>
-        <Color x:Key="PrimaryBlueColor">#007BFF</Color>
-        <SolidColorBrush x:Key="PrimaryBlueBrush" Color="{StaticResource PrimaryBlueColor}"/>
-        <SolidColorBrush x:Key="LightBlueHover" Color="#F1F8FF"/>
-        <SolidColorBrush x:Key="TextDarkBrush" Color="#2C3E50"/>
-        <SolidColorBrush x:Key="TextLightBrush" Color="#666"/>
+    <Grid Margin="40,30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <!-- Estilo de Tarjeta con Sombra -->
-        <Style x:Key="GoMedCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="CornerRadius" Value="15"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Estilo de Botones del Menú Lateral -->
-        <Style x:Key="NavButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#555"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="15,10"/>
-            <Setter Property="Margin" Value="5,2"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10">
-                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource LightBlueHover}"/>
-                                <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Estilo Redondeado y ANIMADO para Botones dentro de la Tabla -->
-        <Style x:Key="GridActionBtnStyle" TargetType="Button">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Margin" Value="4,0"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-
-                        <!-- Agregamos RenderTransformOrigin para que el botón se hunda desde su centro -->
-                        <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                CornerRadius="6" Padding="15,6" BorderThickness="0"
-                                RenderTransformOrigin="0.5,0.5">
-
-                            <Border.RenderTransform>
-                                <ScaleTransform ScaleX="1" ScaleY="1"/>
-                            </Border.RenderTransform>
-
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-
-                        <ControlTemplate.Triggers>
-                            <!-- EFECTO HOVER: Se vuelve notoriamente más claro al pasar el mouse -->
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.75"/>
-                            </Trigger>
-
-                            <!-- EFECTO CLIC: Se hunde físicamente (Reduce su tamaño al 92%) -->
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
-                                <Setter TargetName="border" Property="RenderTransform">
-                                    <Setter.Value>
-                                        <ScaleTransform ScaleX="0.92" ScaleY="0.92"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="240"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <!-- ===== BARRA LATERAL (IZQUIERDA) ===== -->
-        <Border Grid.Column="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0">
-            <DockPanel LastChildFill="True">
-                <StackPanel DockPanel.Dock="Top" Margin="20,30,20,0">
-                    <TextBlock Text="⚕ GoMed" Foreground="{StaticResource PrimaryBlueBrush}" FontSize="24" FontWeight="Bold" Margin="0,0,0,40"/>
-
-                    <Button Content="← Inicio" Style="{StaticResource NavButtonStyle}" Click="BtnVolver_Click"/>
-                    <Button Content="📊 Ver Consultas" Style="{StaticResource NavButtonStyle}" Background="{StaticResource LightBlueHover}" Foreground="{StaticResource PrimaryBlueBrush}" FontWeight="SemiBold"/>
-                </StackPanel>
-
-                <StackPanel DockPanel.Dock="Bottom" Margin="20">
-                    <Separator Background="#EEE" Margin="0,0,0,10"/>
-                    <TextBlock Text="Gestión Médica" FontSize="14" FontWeight="SemiBold" Foreground="#888"/>
-                </StackPanel>
-                <Grid/>
-            </DockPanel>
-        </Border>
-
-        <!-- ===== CONTENIDO PRINCIPAL (DERECHA) ===== -->
-        <Grid Grid.Column="1" Margin="40,30,40,25">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <!-- 1. Encabezado -->
-            <StackPanel Grid.Row="0" Margin="0,0,0,20">
-                <TextBlock Text="Historial de Consultas" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextDarkBrush}"/>
-                <TextBlock Text="Visualiza o busca el registro de atenciones pasadas" FontSize="15" Foreground="{StaticResource TextLightBrush}" Margin="2,3,0,0"/>
+        <!-- 1. Encabezado + Botón Nueva Consulta -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock Text="Historial de Consultas" Style="{StaticResource ViewTitleStyle}"/>
+                <TextBlock Text="Visualiza o busca el registro de atenciones pasadas" Style="{StaticResource ViewSubtitleStyle}"/>
             </StackPanel>
 
-            <!-- 2. Buscador Inteligente -->
-            <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Margin="0,0,0,20">
-                <Grid>
-                    <TextBox x:Name="txtBusqueda" Height="45" VerticalContentAlignment="Center" 
-                             Padding="45,0,15,0" FontSize="15" BorderThickness="0" Background="Transparent" 
-                             TextChanged="TxtBusqueda_TextChanged"/>
-
-                    <!-- Texto "Fantasma" e ícono de lupa -->
-                    <TextBlock IsHitTestVisible="False" Text="🔍   Buscar paciente por nombre o apellido..." 
-                               VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15,0,0,0" 
-                               Foreground="#AAA" FontSize="15">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Text, ElementName=txtBusqueda}" Value="">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </Grid>
-            </Border>
-
-            <!-- 3. Tabla de Datos en Tarjeta -->
-            <Border Grid.Row="2" Style="{StaticResource GoMedCardStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-
-                <DataGrid x:Name="dgConsultas" AutoGenerateColumns="False" IsReadOnly="True" 
-                          Background="Transparent" BorderThickness="0" RowHeight="45" FontSize="14"
-                          HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
-                          HorizontalGridLinesBrush="#F0F0F0" SelectionMode="Single">
-
-                    <DataGrid.Resources>
-                        <!-- Estilo para los encabezados de columna (Más modernos) -->
-                        <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="Foreground" Value="#888888"/>
-                            <Setter Property="Padding" Value="15,0,0,12"/>
-                            <Setter Property="FontSize" Value="12"/>
-                        </Style>
-
-                        <!-- Estilo de Fila (Hover y Selección Suave) -->
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="Background" Value="White"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#F8F9FA"/>
-                                </Trigger>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#E8F4FF"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-
-                        <!-- Estilo de Celda -->
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                            <Setter Property="Padding" Value="15,0"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <!-- Hacemos que el color de selección respete los colores de texto que creamos -->
-                                    <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource Mode=Self}}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-
-                        <!-- ✨ NUEVO: Estilos de Tipografía individuales para cada columna ✨ -->
-                        <Style x:Key="FechaTextStyle" TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="#7F8C8D"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="FontSize" Value="13"/>
-                        </Style>
-
-                        <Style x:Key="PacienteTextStyle" TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="#2C3E50"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="FontSize" Value="15"/>
-                        </Style>
-
-                        <Style x:Key="MotivoTextStyle" TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="#555555"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="FontSize" Value="14"/>
-                            <!-- TextTrimming hace que el texto largo se corte con "..." -->
-                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                        </Style>
-                    </DataGrid.Resources>
-
-                    <DataGrid.Columns>
-                        <!-- Aplicamos los estilos 'ElementStyle' a cada columna -->
-                        <DataGridTextColumn Header="FECHA" Binding="{Binding Fecha, StringFormat=\{0:dd/MM/yyyy\}}" Width="100" 
-                                            ElementStyle="{StaticResource FechaTextStyle}"/>
-
-                        <DataGridTextColumn Header="PACIENTE" Binding="{Binding PacienteNombre}" Width="1.5*" 
-                                            ElementStyle="{StaticResource PacienteTextStyle}"/>
-
-                        <DataGridTextColumn Header="MOTIVO DE CONSULTA" Binding="{Binding Motivo}" Width="2.5*" 
-                                            ElementStyle="{StaticResource MotivoTextStyle}"/>
-
-                        <!-- Botones de Acción -->
-                        <DataGridTemplateColumn Width="230">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0">
-                                        <Button Content="Ver Detalles" Click="BtnVerDetalle_Click" 
-                                                Style="{StaticResource GridActionBtnStyle}" Background="{StaticResource PrimaryBlueBrush}"/>
-
-                                        <Button Content="Eliminar" Click="BtnEliminar_Click" 
-                                                Style="{StaticResource GridActionBtnStyle}" Background="#DC3545"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-
-
-                </DataGrid>
-
-            </Border>
+            <Button Content="📝 Nueva Consulta" HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Style="{StaticResource AccentButtonStyle}" Click="BtnNuevaConsulta_Click"/>
         </Grid>
+
+        <!-- 2. Buscador Inteligente -->
+        <Border Grid.Row="1" Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Margin="0,0,0,20">
+            <Grid>
+                <TextBox x:Name="txtBusqueda" Height="45" VerticalContentAlignment="Center"
+                         Padding="40,0,15,0" FontSize="15" BorderThickness="0" Background="Transparent"
+                         TextChanged="TxtBusqueda_TextChanged"/>
+
+                <TextBlock IsHitTestVisible="False" Text="🔍   Buscar paciente por nombre o apellido..."
+                           VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15,0,0,0"
+                           Foreground="#AAA" FontSize="15">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=txtBusqueda}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </Border>
+
+        <!-- 3. Tabla de Datos en Tarjeta -->
+        <Border Grid.Row="2" Style="{StaticResource GoMedCardStyle}" Padding="10" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <DataGrid x:Name="dgConsultas" AutoGenerateColumns="False" IsReadOnly="True"
+                      Background="Transparent" BorderThickness="0" RowHeight="45" FontSize="14"
+                      HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#F0F0F0" SelectionMode="Single">
+
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Foreground" Value="#888888"/>
+                        <Setter Property="Padding" Value="15,0,0,12"/>
+                        <Setter Property="FontSize" Value="12"/>
+                    </Style>
+
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="White"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F8F9FA"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#E8F4FF"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                        <Setter Property="Padding" Value="15,0"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource Mode=Self}}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="FechaTextStyle" TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#7F8C8D"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="13"/>
+                    </Style>
+
+                    <Style x:Key="PacienteTextStyle" TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#2C3E50"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="15"/>
+                    </Style>
+
+                    <Style x:Key="MotivoTextStyle" TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#555555"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="FECHA" Binding="{Binding Fecha, StringFormat=\{0:dd/MM/yyyy\}}" Width="115"
+                                        ElementStyle="{StaticResource FechaTextStyle}"/>
+
+                    <DataGridTextColumn Header="PACIENTE" Binding="{Binding PacienteNombre}" Width="1.5*"
+                                        ElementStyle="{StaticResource PacienteTextStyle}"/>
+
+                    <DataGridTextColumn Header="MOTIVO DE CONSULTA" Binding="{Binding Motivo}" Width="2.5*"
+                                        ElementStyle="{StaticResource MotivoTextStyle}"/>
+
+                    <DataGridTemplateColumn Width="230">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0">
+                                    <Button Content="Ver Detalles" Click="BtnVerDetalle_Click"
+                                            Style="{StaticResource GridActionBtnStyle}" Background="{StaticResource PrimaryBlueBrush}"/>
+
+                                    <Button Content="Eliminar" Click="BtnEliminar_Click"
+                                            Style="{StaticResource GridActionBtnStyle}" Background="#DC3545"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
     </Grid>
-</Window>
+</UserControl>

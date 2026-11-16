@@ -1,165 +1,92 @@
-﻿<Window x:Class="GoMed.VerFichaPacienteWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Historia Clínica - GoMed" Height="800" Width="1150"
-        WindowStartupLocation="CenterScreen" Background="#F8F9FA">
+﻿<UserControl x:Class="GoMed.VerFichaPacienteWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource AppBackgroundBrush}">
 
-    <Window.Resources>
-        <Style x:Key="GoMedCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="CornerRadius" Value="15"/>
-            <Setter Property="Padding" Value="25"/>
-            <Setter Property="Margin" Value="12"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
+    <Grid Margin="40,25">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#2C3E50"/>
-        </Style>
-
-        <Style x:Key="NavButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#555"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="15,10"/>
-            <Setter Property="Margin" Value="5,2"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10">
-                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#F1F8FF"/>
-                                <Setter Property="Foreground" Value="#007BFF"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="240"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <Border Grid.Column="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0">
-            <DockPanel LastChildFill="True">
-                <StackPanel DockPanel.Dock="Top" Margin="20,30,20,0">
-                    <TextBlock Text="⚕ GoMed" Foreground="#007BFF" FontSize="24" FontWeight="Bold" Margin="0,0,0,40"/>
-                    <Button x:Name="btnVolver" Content="← Volver" Style="{StaticResource SidebarButtonStyle}" Click="BtnVolver_Click"/>
-                </StackPanel>
-
-                <StackPanel DockPanel.Dock="Bottom" Margin="20">
-                    <Separator Background="#EEE" Margin="0,0,0,10"/>
-                    <TextBlock Text="Ficha Clinica" FontSize="10" Foreground="#AAA"/>
-                </StackPanel>
-                <Grid/>
-            </DockPanel>
+        <!-- Barra de búsqueda superior -->
+        <Border Grid.Row="0" Background="White" CornerRadius="12" BorderBrush="#E0E0E0" BorderThickness="1" Padding="18,10" Margin="0,0,0,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="🔍   Buscar Paciente:" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                <ComboBox Grid.Column="1" x:Name="cmbPaciente"
+                          Background="Transparent" BorderThickness="0"
+                          IsEditable="True"
+                          DisplayMemberPath="NombreCompleto"
+                          SelectedValuePath="PacienteID"
+                          SelectionChanged="CmbPaciente_SelectionChanged"
+                          VerticalContentAlignment="Center"/>
+            </Grid>
         </Border>
 
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <!-- Datos de cabecera del Paciente -->
+        <Border Grid.Row="1" Margin="5,0,5,15">
+            <StackPanel>
+                <TextBlock x:Name="txtNombrePaciente" Text="Seleccione un Paciente" FontSize="30" FontWeight="Bold" Foreground="{StaticResource TextDarkBrush}"/>
+                <TextBlock x:Name="txtDniPaciente" Text="DNI: ---" FontSize="16" Foreground="{StaticResource PrimaryBlueBrush}" FontWeight="SemiBold" Margin="2,4,0,0"/>
+            </StackPanel>
+        </Border>
 
-            <Border Grid.Row="0" Background="#F8F9FA" BorderBrush="#EEE" BorderThickness="0,0,0,1">
-                <Grid Margin="10,0">
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                        <Border Background="White" CornerRadius="20" BorderBrush="#DDD" BorderThickness="1" Padding="15,5" Width="850">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="🔍" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#AAA"/>
-                                <ComboBox Grid.Column="1" x:Name="cmbPaciente" 
-                                          Background="Transparent" BorderThickness="0"
-                                          IsEditable="True" 
-                                          DisplayMemberPath="NombreCompleto" 
-                                          SelectedValuePath="PacienteID"
-                                          SelectionChanged="CmbPaciente_SelectionChanged"
-                                          VerticalContentAlignment="Center"/>
-                            </Grid>
-                        </Border>
+        <!-- Cuadrícula 2x2 de Tarjetas de Historia Clínica -->
+        <UniformGrid Grid.Row="2" Columns="2">
+
+            <Border Style="{StaticResource GoMedCardStyle}" Margin="0,0,12,16">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="👤" FontSize="22" Margin="0,0,12,0"/>
+                        <TextBlock Text="Antecedentes Personales" Style="{StaticResource SectionHeaderStyle}"/>
                     </StackPanel>
-                </Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="txtPers" TextWrapping="Wrap" FontSize="15" Foreground="#555" LineHeight="22"/>
+                    </ScrollViewer>
+                </DockPanel>
             </Border>
 
-            <Border Grid.Row="1" Margin="40,30,40,10">
-                <StackPanel>
-                    <TextBlock x:Name="txtNombrePaciente" Text="Seleccione un Paciente" FontSize="32" FontWeight="Bold" Foreground="#2C3E50"/>
-                    <TextBlock x:Name="txtDniPaciente" Text="DNI: ---" FontSize="16" Foreground="#007BFF" FontWeight="SemiBold" Margin="2,5,0,0"/>
-                </StackPanel>
+            <Border Style="{StaticResource GoMedCardStyle}" Margin="12,0,0,16">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="👨‍👩‍👧" FontSize="22" Margin="0,0,12,0"/>
+                        <TextBlock Text="Antecedentes Familiares" Style="{StaticResource SectionHeaderStyle}"/>
+                    </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="txtFam" TextWrapping="Wrap" FontSize="15" Foreground="#555" LineHeight="22"/>
+                    </ScrollViewer>
+                </DockPanel>
             </Border>
 
-            <UniformGrid Grid.Row="2" Columns="2" Margin="30">
+            <Border Style="{StaticResource GoMedCardStyle}" Margin="0,0,12,0">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="💪" FontSize="22" Margin="0,0,12,0"/>
+                        <TextBlock Text="Examen Físico" Style="{StaticResource SectionHeaderStyle}"/>
+                    </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="txtExamen" TextWrapping="Wrap" FontSize="15" Foreground="#555" LineHeight="22"/>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
 
-                <Border Style="{StaticResource GoMedCardStyle}">
-                    <DockPanel>
-                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,20">
-                            <TextBlock Text="👤" FontSize="22" Margin="0,0,12,0"/>
-                            <TextBlock Text="Antecedentes Personales" Style="{StaticResource SectionHeaderStyle}"/>
-                        </StackPanel>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <TextBlock x:Name="txtPers" TextWrapping="Wrap" FontSize="15" Foreground="#555" LineHeight="22"/>
-                        </ScrollViewer>
-                    </DockPanel>
-                </Border>
+            <Border Style="{StaticResource GoMedCardStyle}" Margin="12,0,0,0">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="📄" FontSize="22" Margin="0,0,12,0"/>
+                        <TextBlock Text="Notas Clínicas" Style="{StaticResource SectionHeaderStyle}"/>
+                    </StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="txtNotas" TextWrapping="Wrap" FontSize="15" Foreground="#777" FontStyle="Italic" LineHeight="22"/>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
 
-                <Border Style="{StaticResource GoMedCardStyle}">
-                    <DockPanel>
-                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,20">
-                            <TextBlock Text="👨‍👩‍👧" FontSize="22" Margin="0,0,12,0"/>
-                            <TextBlock Text="Antecedentes Familiares" Style="{StaticResource SectionHeaderStyle}"/>
-                        </StackPanel>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <TextBlock x:Name="txtFam" TextWrapping="Wrap" FontSize="15" Foreground="#555" LineHeight="22"/>
-                        </ScrollViewer>
-                    </DockPanel>
-                </Border>
-
-                <Border Style="{StaticResource GoMedCardStyle}">
-                    <DockPanel>
-                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,20">
-                            <TextBlock Text="💪​" FontSize="22" Margin="0,0,12,0"/>
-                            <TextBlock Text="Examen Físico" Style="{StaticResource SectionHeaderStyle}"/>
-                        </StackPanel>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <TextBlock x:Name="txtExamen" TextWrapping="Wrap" FontSize="15" Foreground="#555" LineHeight="22"/>
-                        </ScrollViewer>
-                    </DockPanel>
-                </Border>
-
-                <Border Style="{StaticResource GoMedCardStyle}">
-                    <DockPanel>
-                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,20">
-                            <TextBlock Text="📄" FontSize="22" Margin="0,0,12,0"/>
-                            <TextBlock Text="Notas Clínicas" Style="{StaticResource SectionHeaderStyle}"/>
-                        </StackPanel>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <TextBlock x:Name="txtNotas" TextWrapping="Wrap" FontSize="15" Foreground="#777" FontStyle="Italic" LineHeight="22"/>
-                        </ScrollViewer>
-                    </DockPanel>
-                </Border>
-
-            </UniformGrid>
-        </Grid>
+        </UniformGrid>
     </Grid>
-</Window>
+</UserControl>

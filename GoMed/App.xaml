@@ -6,27 +6,40 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <!-- PALETA DE COLORES OFICIAL GOMED -->
+            <Color x:Key="PrimaryBlueColor">#007BFF</Color>
             <SolidColorBrush x:Key="PrimaryBlueBrush" Color="#007BFF"/>
             <SolidColorBrush x:Key="SuccessBrush" Color="#28A745"/>
-            <SolidColorBrush x:Key="TextDarkBrush" Color="#343A40"/>
+            <SolidColorBrush x:Key="DangerBrush" Color="#DC3545"/>
+            <SolidColorBrush x:Key="WarningBrush" Color="#FFC107"/>
+            <SolidColorBrush x:Key="WarningBgBrush" Color="#FFF3CD"/>
+            <SolidColorBrush x:Key="WarningTextBrush" Color="#856404"/>
+            <SolidColorBrush x:Key="TextDarkBrush" Color="#2C3E50"/>
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#7F8C8D"/>
+            <SolidColorBrush x:Key="TextLightBrush" Color="#666666"/>
             <SolidColorBrush x:Key="BorderLightBrush" Color="#CED4DA"/>
+            <SolidColorBrush x:Key="BorderCardBrush" Color="#E0E0E0"/>
+            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F8F9FA"/>
             <SolidColorBrush x:Key="CancelButtonBrush" Color="#F8F9FA"/>
             <SolidColorBrush x:Key="CancelButtonBorderBrush" Color="#6C757D"/>
             <SolidColorBrush x:Key="SidebarTextBrush" Color="#495057"/>
             <SolidColorBrush x:Key="SidebarBackgroundHoverBrush" Color="#F1F3F5"/>
             <SolidColorBrush x:Key="SidebarBackgroundActiveBrush" Color="#E7F3FF"/>
+            <SolidColorBrush x:Key="LightBlueHover" Color="#F1F8FF"/>
 
+            <!-- ESTILOS BASE DE INPUTS -->
             <Style TargetType="TextBox">
                 <Setter Property="Background" Value="White"/>
                 <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
                 <Setter Property="Padding" Value="10,8"/>
+                <Setter Property="FontSize" Value="14"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="TextBox">
-                            <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                                 <ScrollViewer x:Name="PART_ContentHost"/>
                             </Border>
                         </ControlTemplate>
@@ -40,11 +53,12 @@
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
                 <Setter Property="Padding" Value="10,8"/>
+                <Setter Property="FontSize" Value="14"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="PasswordBox">
-                            <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                                 <ScrollViewer x:Name="PART_ContentHost"/>
                             </Border>
                         </ControlTemplate>
@@ -58,28 +72,81 @@
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
                 <Setter Property="Padding" Value="10,8"/>
+                <Setter Property="FontSize" Value="14"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
 
             <Style TargetType="Label">
-                <Setter Property="Foreground" Value="{StaticResource SidebarTextBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="FontSize" Value="14"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="Margin" Value="0,0,0,4"/>
+                <Setter Property="Margin" Value="0,0,0,5"/>
             </Style>
 
+            <!-- ESTILO DE TARJETA COMPARTIDO (GoMedCardStyle) -->
+            <Style x:Key="GoMedCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="CornerRadius" Value="15"/>
+                <Setter Property="Padding" Value="25"/>
+                <Setter Property="Margin" Value="0,0,0,20"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderCardBrush}"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05" Color="Black"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="InputBorderStyle" TargetType="Border">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="CornerRadius" Value="6"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Height" Value="38"/>
+                <Setter Property="Padding" Value="10,0"/>
+            </Style>
+
+            <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+            </Style>
+
+            <Style x:Key="ViewTitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="28"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
+            </Style>
+
+            <Style x:Key="ViewSubtitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                <Setter Property="Margin" Value="2,4,0,0"/>
+            </Style>
+
+            <!-- ESTILOS DE BOTONES DE ACCIÓN -->
             <Style x:Key="BaseButtonStyle" TargetType="Button">
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="FontSize" Value="14"/>
-                <Setter Property="Padding" Value="18,10"/>
+                <Setter Property="Padding" Value="20,10"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Border x:Name="border" CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
                             </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -89,7 +156,6 @@
                 <Setter Property="Background" Value="{StaticResource PrimaryBlueBrush}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource PrimaryBlueBrush}"/>
                 <Setter Property="Foreground" Value="White"/>
-                <Setter Property="Padding" Value="12,8"/>
             </Style>
 
             <Style x:Key="SaveButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
@@ -104,19 +170,20 @@
                 <Setter Property="Foreground" Value="{StaticResource CancelButtonBorderBrush}"/>
             </Style>
 
+            <!-- ESTILOS DEL SIDEBAR LATERAL -->
             <Style x:Key="SidebarButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{StaticResource SidebarTextBrush}"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                <Setter Property="Padding" Value="15,12"/>
+                <Setter Property="Padding" Value="14,11"/>
                 <Setter Property="Margin" Value="8,2"/>
                 <Setter Property="FontSize" Value="14"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="6">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8">
                                 <ContentPresenter VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
                             </Border>
                             <ControlTemplate.Triggers>
@@ -135,6 +202,100 @@
                 <Setter Property="FontWeight" Value="SemiBold"/>
             </Style>
 
+            <!-- BOTONES ANIMADOS EN TABLAS (GridActionBtnStyle) -->
+            <Style x:Key="GridActionBtnStyle" TargetType="Button">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Margin" Value="4,0"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}"
+                                    CornerRadius="6" Padding="14,6" BorderThickness="0"
+                                    RenderTransformOrigin="0.5,0.5">
+                                <Border.RenderTransform>
+                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                </Border.RenderTransform>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.82"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.95"/>
+                                    <Setter TargetName="border" Property="RenderTransform">
+                                        <Setter.Value>
+                                            <ScaleTransform ScaleX="0.94" ScaleY="0.94"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- TARJETA ANIMADA DE INICIO (DashboardButtonStyle) -->
+            <Style x:Key="DashboardButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="CardBorder" Background="{TemplateBinding Background}"
+                                    CornerRadius="15" Margin="15" Width="280" Height="190"
+                                    BorderThickness="2" RenderTransformOrigin="0.5,0.5">
+                                <Border.BorderBrush>
+                                    <SolidColorBrush Color="#EEEEEE"/>
+                                </Border.BorderBrush>
+                                <Border.RenderTransform>
+                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                </Border.RenderTransform>
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05" Color="Black"/>
+                                </Border.Effect>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <EventTrigger RoutedEvent="MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.04" Duration="0:0:0.2" />
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.04" Duration="0:0:0.2" />
+                                            <ColorAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" To="#007BFF" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0.12" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" To="25" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.2" />
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.2" />
+                                            <ColorAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" To="#EEEEEE" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)" To="0.05" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="CardBorder" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)" To="15" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="CardBorder" Property="Background" Value="#F1F8FF"/>
+                                    <Setter TargetName="CardBorder" Property="RenderTransform">
+                                        <Setter.Value>
+                                            <ScaleTransform ScaleX="0.97" ScaleY="0.97"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

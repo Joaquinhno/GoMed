@@ -1,105 +1,225 @@
 ﻿using GoMed.Utils;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using Microsoft.Win32;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace GoMed
 {
     public partial class MainWindow : Window
     {
+        // Pila de navegación para flujos Maestro -> Detalle / Edición
+        private readonly Stack<(UserControl Vista, string Titulo, Button? BotonSidebar)> _historialNavegacion = new();
+        private Button? _botonSidebarActual;
+
+        public static MainWindow? Instance => Application.Current.MainWindow as MainWindow;
+
         public MainWindow()
         {
             InitializeComponent();
+            Application.Current.MainWindow = this;
 
             // Cargamos el nombre del médico desde la sesión
-            lblNombreDoctor.Text = SesionUsuario.NombreCompleto;
+            lblNombreDoctor.Text = string.IsNullOrWhiteSpace(SesionUsuario.NombreCompleto)
+                ? "Dr. Daniel Infante"
+                : $"Dr. {SesionUsuario.NombreCompleto}";
+
+            MarcarBotonSidebarActivo(btnNavInicio);
         }
 
-        #region NAVEGACIÓN DE MENÚS
+        #region MOTOR DE NAVEGACIÓN UNIFICADO (SHELL)
 
         /// <summary>
-        /// Controla qué panel se muestra en pantalla y gestiona el botón Volver.
+        /// Navega a un UserControl dentro del área de contenido principal.
         /// </summary>
-        private void MostrarMenu(UIElement menuAMostrar)
+        public void NavegarA(UserControl nuevaVista, string tituloSeccion, Button? botonSidebar = null, bool guardarEnHistorial = false)
         {
-            // Ocultamos todos los contenedores
-            MenuPrincipal.Visibility = Visibility.Collapsed;
-            SubMenuPacientes.Visibility = Visibility.Collapsed;
-            SubMenuFicha.Visibility = Visibility.Collapsed;
-            SubMenuConsulta.Visibility = Visibility.Collapsed;
+            // Si estamos saliendo de CargarConsultaWindow y no vamos a volver a ella, aseguramos apagar el servidor QR
+            if (!guardarEnHistorial && MainContent.Content is CargarConsultaWindow consultaActual)
+            {
+                consultaActual.DetenerServidorWeb();
+            }
 
-            // Mostramos el seleccionado
-            menuAMostrar.Visibility = Visibility.Visible;
+            if (guardarEnHistorial && MainContent.Content is UserControl vistaAnterior)
+            {
+                _historialNavegacion.Push((vistaAnterior, lblSeccionActual.Text, _botonSidebarActual));
+            }
+            else if (!guardarEnHistorial)
+            {
+                _historialNavegacion.Clear();
+            }
 
-            // Si no es el menú principal, mostramos la flecha de volver
-            btnVolver.Visibility = (menuAMostrar == MenuPrincipal) ? Visibility.Collapsed : Visibility.Visible;
+            VistaInicio.Visibility = Visibility.Collapsed;
+            MainContent.Content = nuevaVista;
+            MainContent.Visibility = Visibility.Visible;
+
+            lblSeccionActual.Text = tituloSeccion;
+            btnVolver.Visibility = _historialNavegacion.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            if (botonSidebar != null)
+            {
+                MarcarBotonSidebarActivo(botonSidebar);
+            }
         }
 
-        /// Método público para que otras ventanas puedan pedirle al MainWindow que cambie al submenú de Pacientes
+        /// <summary>
+        /// Regresa a la vista anterior en la pila de navegación o al Inicio si la pila está vacía.
+        /// </summary>
+        public void Volver()
+        {
+            if (MainContent.Content is CargarConsultaWindow consultaActual)
+            {
+                consultaActual.DetenerServidorWeb();
+            }
+
+            if (_historialNavegacion.Count > 0)
+            {
+                var (vistaPrevia, tituloPrevio, botonPrevio) = _historialNavegacion.Pop();
+
+                // Si la vista previa es un listado, refrescamos sus datos por si hubo altas/ediciones/bajas
+                if (vistaPrevia is VisualizarPacientesWindow listadoPacientes)
+                {
+                    listadoPacientes.RefrescarDatos();
+                }
+                else if (vistaPrevia is VerConsultasWindow listadoConsultas)
+                {
+                    listadoConsultas.RefrescarDatos();
+                }
+
+                MainContent.Content = vistaPrevia;
+                MainContent.Visibility = Visibility.Visible;
+                VistaInicio.Visibility = Visibility.Collapsed;
+
+                lblSeccionActual.Text = tituloPrevio;
+                btnVolver.Visibility = _historialNavegacion.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                if (botonPrevio != null)
+                {
+                    MarcarBotonSidebarActivo(botonPrevio);
+                }
+            }
+            else
+            {
+                IrAInicio();
+            }
+        }
+
+        /// <summary>
+        /// Muestra el Dashboard principal de Inicio.
+        /// </summary>
+        public void IrAInicio()
+        {
+            if (MainContent.Content is CargarConsultaWindow consultaActual)
+            {
+                consultaActual.DetenerServidorWeb();
+            }
+
+            _historialNavegacion.Clear();
+            MainContent.Content = null;
+            MainContent.Visibility = Visibility.Collapsed;
+            VistaInicio.Visibility = Visibility.Visible;
+
+            lblSeccionActual.Text = "Panel Principal";
+            btnVolver.Visibility = Visibility.Collapsed;
+            MarcarBotonSidebarActivo(btnNavInicio);
+        }
+
+        private void MarcarBotonSidebarActivo(Button botonActivo)
+        {
+            var botones = new[]
+            {
+                btnNavInicio,
+                btnNavPacientes,
+                btnNavNuevoPaciente,
+                btnNavFichaEditar,
+                btnNavFichaVer,
+                btnNavConsultas,
+                btnNavNuevaConsulta,
+                btnNavRecetas
+            };
+
+            Style estiloNormal = (Style)FindResource("SidebarButtonStyle");
+            Style estiloActivo = (Style)FindResource("SidebarButtonActiveStyle");
+
+            foreach (var btn in botones)
+            {
+                if (btn != null)
+                {
+                    btn.Style = (btn == botonActivo) ? estiloActivo : estiloNormal;
+                }
+            }
+
+            _botonSidebarActual = botonActivo;
+        }
+
+        /// <summary>
+        /// Conservado por compatibilidad con llamadas desde CargarConsultaWindow.BtnPacientes_Click
         /// </summary>
         public void AbrirSubMenuPacientes()
         {
-            MostrarMenu(SubMenuPacientes);
-        }
-
-
-        // Eventos para entrar a los Submenús
-        private void BtnPacientes_Click(object sender, RoutedEventArgs e) => MostrarMenu(SubMenuPacientes);
-        private void BtnFichaMenu_Click(object sender, RoutedEventArgs e) => MostrarMenu(SubMenuFicha);
-        private void BtnConsultaMenu_Click(object sender, RoutedEventArgs e) => MostrarMenu(SubMenuConsulta);
-
-        // Evento para regresar al inicio
-        private void BtnVolver_Click(object sender, RoutedEventArgs e) => MostrarMenu(MenuPrincipal);
-
-        #endregion
-
-        #region ACCIONES DE PACIENTES
-
-        private void BtnAgregarPaciente_Click(object sender, RoutedEventArgs e)
-        {
-            CargarPacienteWindow ventanaCargar = new CargarPacienteWindow();
-            ventanaCargar.Owner = this;
-            ventanaCargar.ShowDialog();
-        }
-
-        private void BtnVisualizarPacientes_Click(object sender, RoutedEventArgs e)
-        {
-            VisualizarPacientesWindow win = new VisualizarPacientesWindow();
-            win.Owner = this;
-            win.ShowDialog();
+            NavegarA(new VisualizarPacientesWindow(), "Pacientes — Listado General", btnNavPacientes, false);
         }
 
         #endregion
 
-        #region ACCIONES DE FICHA CLÍNICA
+        #region EVENTOS DEL SIDEBAR Y DASHBOARD
 
-        private void BtnAgregarFicha_Click(object sender, RoutedEventArgs e)
+        private void BtnNavInicio_Click(object sender, RoutedEventArgs e) => IrAInicio();
+
+        private void BtnVolver_Click(object sender, RoutedEventArgs e) => Volver();
+
+        // Tarjetas del Dashboard de Inicio (navegan directo a la vista principal de cada módulo)
+        private void BtnPacientes_Click(object sender, RoutedEventArgs e)
         {
-            // Abre la ventana para crear/editar los antecedentes del paciente
-            FichaClinicaWindow ventanaFicha = new FichaClinicaWindow();
-            ventanaFicha.Owner = this;
-            ventanaFicha.ShowDialog();
+            NavegarA(new VisualizarPacientesWindow(), "Pacientes — Listado General", btnNavPacientes, false);
         }
 
-        private void BtnRevisionFicha_Click(object sender, RoutedEventArgs e)
+        private void BtnFichaMenu_Click(object sender, RoutedEventArgs e)
+        {
+            NavegarA(new FichaClinicaWindow(), "Historia Clínica — Editar Ficha", btnNavFichaEditar, false);
+        }
+
+        private void BtnConsultaMenu_Click(object sender, RoutedEventArgs e)
+        {
+            NavegarA(new VerConsultasWindow(), "Consultas — Historial de Atenciones", btnNavConsultas, false);
+        }
+
+        // Acciones de Pacientes
+        public void BtnAgregarPaciente_Click(object sender, RoutedEventArgs e)
+        {
+            NavegarA(new CargarPacienteWindow(), "Pacientes — Nuevo Paciente", btnNavNuevoPaciente, false);
+        }
+
+        public void BtnVisualizarPacientes_Click(object sender, RoutedEventArgs e)
+        {
+            NavegarA(new VisualizarPacientesWindow(), "Pacientes — Listado General", btnNavPacientes, false);
+        }
+
+        public void NavegarAEditarPaciente(int pacienteId)
+        {
+            NavegarA(new CargarPacienteWindow(pacienteId), "Pacientes — Editar Paciente", btnNavPacientes, guardarEnHistorial: true);
+        }
+
+        public void NavegarAVerFichaPaciente(int pacienteId)
+        {
+            NavegarA(new VerFichaPacienteWindow(pacienteId), "Historia Clínica — Revisión de Ficha", btnNavFichaVer, guardarEnHistorial: true);
+        }
+
+        // Acciones de Ficha Clínica
+        public void BtnAgregarFicha_Click(object sender, RoutedEventArgs e)
+        {
+            NavegarA(new FichaClinicaWindow(), "Historia Clínica — Editar Ficha", btnNavFichaEditar, false);
+        }
+
+        public void BtnRevisionFicha_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Abre la ventana de búsqueda y visualización de fichas existentes
-                VerFichaPacienteWindow ventanaConsulta = new VerFichaPacienteWindow();
-                ventanaConsulta.Owner = this;
-                ventanaConsulta.ShowDialog();
+                NavegarA(new VerFichaPacienteWindow(), "Historia Clínica — Revisión de Ficha", btnNavFichaVer, false);
             }
             catch (Exception ex)
             {
@@ -107,25 +227,17 @@ namespace GoMed
             }
         }
 
-        #endregion
-
-        #region ACCIONES DE CONSULTAS
-
-        private void BtnAgregarConsulta_Click(object sender, RoutedEventArgs e)
+        // Acciones de Consultas
+        public void BtnAgregarConsulta_Click(object sender, RoutedEventArgs e)
         {
-            CargarConsultaWindow ventana = new CargarConsultaWindow();
-            ventana.Owner = this;
-            ventana.ShowDialog();
+            NavegarA(new CargarConsultaWindow(), "Consultas — Nueva Consulta", btnNavNuevaConsulta, false);
         }
 
-        private void BtnVisualizarConsultas_Click(object sender, RoutedEventArgs e)
+        public void BtnVisualizarConsultas_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Abre el historial de todas las consultas realizadas
-                VerConsultasWindow ventanaHistorial = new VerConsultasWindow();
-                ventanaHistorial.Owner = this;
-                ventanaHistorial.ShowDialog();
+                NavegarA(new VerConsultasWindow(), "Consultas — Historial de Atenciones", btnNavConsultas, false);
             }
             catch (Exception ex)
             {
@@ -133,21 +245,23 @@ namespace GoMed
             }
         }
 
-        #endregion
+        public void NavegarADetalleConsulta(int consultaId)
+        {
+            NavegarA(new DetalleConsultaWindow(consultaId), "Consultas — Detalle de Atención", btnNavConsultas, guardarEnHistorial: true);
+        }
 
+        // Acciones de Recetas
         private void BtnAbrirRecetas_Click(object sender, RoutedEventArgs e)
         {
-            // Creamos la instancia de la ventana de recetas
-            GenerarRecetaWindow recetaWindow = new GenerarRecetaWindow();
-
-            // La mostramos de forma modal (bloquea la principal hasta cerrar)
-            // O puedes usar .Show() si quieres que el médico trabaje en ambas a la vez
-            recetaWindow.Show();
+            NavegarA(new GenerarRecetaWindow(), "Prescripciones — Generar Receta Médica", btnNavRecetas, false);
         }
+
+        #endregion
+
+        #region RESPALDO Y RESTAURACIÓN DE BASE DE DATOS (INTACTO)
 
         private void BtnBackup_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // 1. Preguntamos dónde quiere guardar el backup
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "Archivo Zip (*.zip)|*.zip",
@@ -159,56 +273,47 @@ namespace GoMed
             {
                 try
                 {
-                    // 2. Definimos las rutas de lo que queremos guardar
                     string rutaBase = AppDomain.CurrentDomain.BaseDirectory;
+                    string rutaDb = Path.Combine(rutaBase, "gomed.db");
+                    string rutaFotos = Path.Combine(rutaBase, "FotosConsultas");
+                    string rutaFirmas = Path.Combine(rutaBase, "Firmas");
 
-                    // IMPORTANTE: Si tu base de datos se llama distinto en AppContext.cs, cámbialo aquí
-                    string rutaDb = System.IO.Path.Combine(rutaBase, "gomed.db");
-                    string rutaFotos = System.IO.Path.Combine(rutaBase, "FotosConsultas");
-                    string rutaFirmas = System.IO.Path.Combine(rutaBase, "Firmas");
-
-                    // 3. Creamos una carpeta temporal para juntar todo
-                    string carpetaTemp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "GoMedBackupTemp");
+                    string carpetaTemp = Path.Combine(Path.GetTempPath(), "GoMedBackupTemp");
                     if (Directory.Exists(carpetaTemp)) Directory.Delete(carpetaTemp, true);
                     Directory.CreateDirectory(carpetaTemp);
 
-                    // 4. Copiamos la base de datos (si existe)
                     if (File.Exists(rutaDb))
                     {
-                        File.Copy(rutaDb, System.IO.Path.Combine(carpetaTemp, "gomed.db"));
+                        File.Copy(rutaDb, Path.Combine(carpetaTemp, "gomed.db"));
                     }
                     else
                     {
                         MessageBox.Show("No se encontró la base de datos. Asegúrate de que el nombre 'gomed.db' sea el correcto.", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
 
-                    // 5. Copiamos la carpeta de fotos (si existe)
                     if (Directory.Exists(rutaFotos))
                     {
-                        string tempFotos = System.IO.Path.Combine(carpetaTemp, "FotosConsultas");
+                        string tempFotos = Path.Combine(carpetaTemp, "FotosConsultas");
                         Directory.CreateDirectory(tempFotos);
                         foreach (string file in Directory.GetFiles(rutaFotos))
                         {
-                            File.Copy(file, System.IO.Path.Combine(tempFotos, System.IO.Path.GetFileName(file)));
+                            File.Copy(file, Path.Combine(tempFotos, Path.GetFileName(file)));
                         }
                     }
 
-                    // 6. Copiamos la carpeta de firmas (si existe)
                     if (Directory.Exists(rutaFirmas))
                     {
-                        string tempFirmas = System.IO.Path.Combine(carpetaTemp, "Firmas");
+                        string tempFirmas = Path.Combine(carpetaTemp, "Firmas");
                         Directory.CreateDirectory(tempFirmas);
                         foreach (string file in Directory.GetFiles(rutaFirmas))
                         {
-                            File.Copy(file, System.IO.Path.Combine(tempFirmas, System.IO.Path.GetFileName(file)));
+                            File.Copy(file, Path.Combine(tempFirmas, Path.GetFileName(file)));
                         }
                     }
 
-                    // 7. Comprimimos todo en el archivo ZIP que el doctor eligió
-                    if (File.Exists(saveFileDialog.FileName)) File.Delete(saveFileDialog.FileName); // Borra si sobreescribe
+                    if (File.Exists(saveFileDialog.FileName)) File.Delete(saveFileDialog.FileName);
                     ZipFile.CreateFromDirectory(carpetaTemp, saveFileDialog.FileName);
 
-                    // 8. Limpiamos la basura temporal
                     Directory.Delete(carpetaTemp, true);
 
                     MessageBox.Show("Copia de seguridad creada exitosamente.\n\nGuarda este archivo .zip en un lugar seguro (Google Drive o un Pendrive).", "Respaldo Exitoso", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -222,14 +327,12 @@ namespace GoMed
 
         private void BtnRestaurar_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // 1. Advertencia crítica antes de hacer nada
             var advertencia = MessageBox.Show(
                 "¡ATENCIÓN!\n\nRestaurar una copia de seguridad reemplazará TODOS los datos actuales (pacientes, consultas, fotos y recetas).\n\n¿Estás completamente seguro de que deseas continuar?",
                 "Confirmar Restauración", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (advertencia != MessageBoxResult.Yes) return;
 
-            // 2. Pedimos al doctor que seleccione su archivo ZIP
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Archivo Zip (*.zip)|*.zip",
@@ -243,28 +346,25 @@ namespace GoMed
                     string archivoZip = openFileDialog.FileName;
                     string rutaBase = AppDomain.CurrentDomain.BaseDirectory;
 
-                    string rutaDb = System.IO.Path.Combine(rutaBase, "gomed.db");
-                    string rutaFotos = System.IO.Path.Combine(rutaBase, "FotosConsultas");
-                    string rutaFirmas = System.IO.Path.Combine(rutaBase, "Firmas");
+                    string rutaDb = Path.Combine(rutaBase, "gomed.db");
+                    string rutaFotos = Path.Combine(rutaBase, "FotosConsultas");
+                    string rutaFirmas = Path.Combine(rutaBase, "Firmas");
 
-                    // 3. Creamos una carpeta temporal para descomprimir el ZIP
-                    string carpetaTemp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "GoMedRestoreTemp");
+                    string carpetaTemp = Path.Combine(Path.GetTempPath(), "GoMedRestoreTemp");
                     if (Directory.Exists(carpetaTemp)) Directory.Delete(carpetaTemp, true);
                     Directory.CreateDirectory(carpetaTemp);
 
-                    // 4. Extraemos todo el contenido del ZIP
                     ZipFile.ExtractToDirectory(archivoZip, carpetaTemp);
 
-                    // 5. TRUCO VITAL: Liberar la base de datos para que Windows nos deje borrarla/sobrescribirla
+                    // Liberar la base de datos antes de sobrescribir
                     Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
 
-                    // 6. Reemplazamos la Base de Datos
-                    string dbExtraida = System.IO.Path.Combine(carpetaTemp, "gomed.db");
+                    string dbExtraida = Path.Combine(carpetaTemp, "gomed.db");
                     if (File.Exists(dbExtraida))
                     {
-                        File.Copy(dbExtraida, rutaDb, true); // El 'true' significa "Sobrescribir si existe"
+                        File.Copy(dbExtraida, rutaDb, true);
                     }
                     else
                     {
@@ -272,37 +372,37 @@ namespace GoMed
                         return;
                     }
 
-                    // 7. Reemplazamos las Fotos
-                    string fotosExtraidas = System.IO.Path.Combine(carpetaTemp, "FotosConsultas");
+                    string fotosExtraidas = Path.Combine(carpetaTemp, "FotosConsultas");
                     if (Directory.Exists(fotosExtraidas))
                     {
-                        if (Directory.Exists(rutaFotos)) Directory.Delete(rutaFotos, true); // Borramos las fotos actuales
-                        Directory.CreateDirectory(rutaFotos); // Creamos la carpeta limpia
+                        if (Directory.Exists(rutaFotos)) Directory.Delete(rutaFotos, true);
+                        Directory.CreateDirectory(rutaFotos);
                         foreach (string file in Directory.GetFiles(fotosExtraidas))
                         {
-                            File.Copy(file, System.IO.Path.Combine(rutaFotos, System.IO.Path.GetFileName(file)), true);
+                            File.Copy(file, Path.Combine(rutaFotos, Path.GetFileName(file)), true);
                         }
                     }
 
-                    // 8. Reemplazamos las Firmas
-                    string firmasExtraidas = System.IO.Path.Combine(carpetaTemp, "Firmas");
+                    string firmasExtraidas = Path.Combine(carpetaTemp, "Firmas");
                     if (Directory.Exists(firmasExtraidas))
                     {
                         if (Directory.Exists(rutaFirmas)) Directory.Delete(rutaFirmas, true);
                         Directory.CreateDirectory(rutaFirmas);
                         foreach (string file in Directory.GetFiles(firmasExtraidas))
                         {
-                            File.Copy(file, System.IO.Path.Combine(rutaFirmas, System.IO.Path.GetFileName(file)), true);
+                            File.Copy(file, Path.Combine(rutaFirmas, Path.GetFileName(file)), true);
                         }
                     }
 
-                    // 9. Borramos la basura temporal
                     Directory.Delete(carpetaTemp, true);
 
                     MessageBox.Show("¡Los datos han sido restaurados con éxito!\n\nLa aplicación se reiniciará automáticamente para cargar la nueva información.", "Restauración Exitosa", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // 10. Reiniciamos la aplicación de forma automática
-                    System.Diagnostics.Process.Start(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                    var exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName;
+                    if (!string.IsNullOrEmpty(exePath))
+                    {
+                        System.Diagnostics.Process.Start(exePath);
+                    }
                     Application.Current.Shutdown();
                 }
                 catch (Exception ex)
@@ -312,6 +412,6 @@ namespace GoMed
             }
         }
 
-
+        #endregion
     }
 }

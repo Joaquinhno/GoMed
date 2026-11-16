@@ -1,22 +1,12 @@
 ﻿using GoMed.Utils;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace GoMed
 {
-    public partial class VerFichaPacienteWindow : Window
+    public partial class VerFichaPacienteWindow : UserControl
     {
         public VerFichaPacienteWindow()
         {
@@ -24,7 +14,7 @@ namespace GoMed
             CargarListaPacientes();
         }
 
-        // Sobrecarga para cuando vienes desde otra ventana con un ID específico
+        // Sobrecarga para cuando vienes desde otra vista con un ID específico
         public VerFichaPacienteWindow(int pacienteId) : this()
         {
             cmbPaciente.SelectedValue = pacienteId;
@@ -36,7 +26,8 @@ namespace GoMed
             {
                 var pacientes = context.Pacientes
                     .Where(p => p.MedicoID == SesionUsuario.MedicoID)
-                    .Select(p => new {
+                    .Select(p => new
+                    {
                         p.PacienteID,
                         NombreCompleto = $"{p.Nombre} {p.Apellido} (DNI: {p.Dni})"
                     }).ToList();
@@ -68,9 +59,9 @@ namespace GoMed
 
                     if (paciente.FichaClinica != null)
                     {
-                        txtPers.Text = paciente.FichaClinica.AntecedentesPersonales ?? "Sin registros.";
-                        txtFam.Text = paciente.FichaClinica.AntecedentesFamiliares ?? "Sin registros.";
-                        txtExamen.Text = paciente.FichaClinica.ExamenFisico ?? "No realizado.";
+                        txtPers.Text = string.IsNullOrWhiteSpace(paciente.FichaClinica.AntecedentesPersonales) ? "Sin registros." : paciente.FichaClinica.AntecedentesPersonales;
+                        txtFam.Text = string.IsNullOrWhiteSpace(paciente.FichaClinica.AntecedentesFamiliares) ? "Sin registros." : paciente.FichaClinica.AntecedentesFamiliares;
+                        txtExamen.Text = string.IsNullOrWhiteSpace(paciente.FichaClinica.ExamenFisico) ? "No realizado." : paciente.FichaClinica.ExamenFisico;
                         txtNotas.Text = paciente.FichaClinica.Notas ?? "";
                     }
                     else
@@ -84,12 +75,15 @@ namespace GoMed
 
         private void LimpiarTextos()
         {
-            txtPers.Text = ""; txtFam.Text = ""; txtExamen.Text = ""; txtNotas.Text = "";
+            txtPers.Text = "";
+            txtFam.Text = "";
+            txtExamen.Text = "";
+            txtNotas.Text = "";
         }
 
         private void BtnVolver_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            MainWindow.Instance?.Volver();
         }
     }
 }

@@ -1,103 +1,22 @@
-﻿<Window x:Class="GoMed.CargarConsultaWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Nueva Consulta - GoMed" 
-        Height="700" Width="1050" 
-        MinHeight="650" MinWidth="900"
-        WindowStartupLocation="CenterScreen" Background="#F8F9FA"
-        WindowState="Maximized">
-
-    <Window.Resources>
-        <Color x:Key="PrimaryBlueColor">#007BFF</Color>
-        <SolidColorBrush x:Key="PrimaryBlueBrush" Color="{StaticResource PrimaryBlueColor}"/>
-        <SolidColorBrush x:Key="LightBlueHover" Color="#F1F8FF"/>
-        <SolidColorBrush x:Key="TextDarkBrush" Color="#2C3E50"/>
-        <SolidColorBrush x:Key="TextLightBrush" Color="#666"/>
-
-        <Style x:Key="GoMedCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="CornerRadius" Value="15"/>
-            <Setter Property="Padding" Value="25"/>
-            <Setter Property="Margin" Value="0,0,0,20"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="NavButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#555"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="15,10"/>
-            <Setter Property="Margin" Value="5,2"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10">
-                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource LightBlueHover}"/>
-                                <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="Label">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="{StaticResource TextDarkBrush}"/>
-            <Setter Property="Margin" Value="0,0,0,5"/>
-        </Style>
-    </Window.Resources>
+﻿<UserControl x:Class="GoMed.CargarConsultaWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource AppBackgroundBrush}"
+             Unloaded="UserControl_Unloaded">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="240"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <!-- BARRA LATERAL -->
-        <Border Grid.Column="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0">
-            <DockPanel LastChildFill="True">
-                <StackPanel DockPanel.Dock="Top" Margin="20,30,20,0">
-                    <TextBlock Text="⚕ GoMed" Foreground="{StaticResource PrimaryBlueBrush}" FontSize="24" FontWeight="Bold" Margin="0,0,0,40"/>
-
-                    <Button x:Name="btnVolverInicio" Content="← Inicio" Style="{StaticResource NavButtonStyle}" Click="BtnVolverInicio_Click"/>
-                    <Button Content="📝 Nueva Consulta" Style="{StaticResource NavButtonStyle}" Background="{StaticResource LightBlueHover}" Foreground="{StaticResource PrimaryBlueBrush}" FontWeight="SemiBold"/>
-                    <Button Content="👤 Pacientes" Style="{StaticResource NavButtonStyle}" Click="BtnPacientes_Click"/>
-                </StackPanel>
-
-                <StackPanel DockPanel.Dock="Bottom" Margin="20">
-                    <Separator Background="#EEE" Margin="0,0,0,10"/>
-                    <TextBlock Text="Dr. Daniel Infante" FontSize="14" FontWeight="SemiBold" Foreground="#333"/>
-                </StackPanel>
-                <Grid/>
-            </DockPanel>
-        </Border>
-
         <!-- FORMULARIO PRINCIPAL -->
-        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-            <Grid Margin="45,40">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Grid Margin="40,30" MaxWidth="1100">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <!-- ENCABEZADO FORMULARIO -->
-                <StackPanel Grid.Row="0" Margin="0,0,0,35">
-                    <TextBlock Text="Registro de Consulta Médica" FontSize="32" FontWeight="Bold" Foreground="{StaticResource TextDarkBrush}"/>
-                    <TextBlock Text="Complete los campos detallados a continuación" FontSize="16" Foreground="{StaticResource TextLightBrush}" Margin="2,5,0,0"/>
+                <StackPanel Grid.Row="0" Margin="0,0,0,25">
+                    <TextBlock Text="Registro de Consulta Médica" Style="{StaticResource ViewTitleStyle}"/>
+                    <TextBlock Text="Complete los campos detallados a continuación y adjunte fotografías si corresponde" Style="{StaticResource ViewSubtitleStyle}"/>
                 </StackPanel>
 
                 <!-- TARJETAS -->
@@ -114,11 +33,11 @@
 
                             <StackPanel Grid.Column="0">
                                 <Label Content="Paciente (Nombre o DNI)"/>
-                                <Border Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Padding="5">
-                                    <ComboBox x:Name="cmbPaciente" IsEditable="True" 
+                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="5">
+                                    <ComboBox x:Name="cmbPaciente" IsEditable="True"
                                               Background="Transparent" BorderThickness="0"
                                               Padding="5" VerticalContentAlignment="Center"
-                                              DisplayMemberPath="NombreCompleto" 
+                                              DisplayMemberPath="NombreCompleto"
                                               SelectedValuePath="PacienteID"
                                               SelectionChanged="CmbPaciente_SelectionChanged"/>
                                 </Border>
@@ -127,7 +46,7 @@
 
                             <StackPanel Grid.Column="2">
                                 <Label Content="Fecha de la Atención"/>
-                                <Border Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Padding="5">
+                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="5">
                                     <DatePicker x:Name="dpFechaConsulta" Background="Transparent" BorderThickness="0" Padding="5" VerticalContentAlignment="Center"/>
                                 </Border>
                             </StackPanel>
@@ -140,24 +59,23 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="30"/>
-                                <!-- Espacio en el medio -->
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
                             <!-- IZQUIERDA: Motivo -->
                             <StackPanel Grid.Column="0">
                                 <Label Content="Motivo de Consulta" Foreground="{StaticResource PrimaryBlueBrush}"/>
-                                <Border Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Padding="8" Margin="0,5,0,0">
-                                    <TextBox x:Name="txtMotivo" Height="175" TextWrapping="Wrap" AcceptsReturn="True" 
-                                             VerticalScrollBarVisibility="Auto" BorderThickness="0" FontSize="14"/>
+                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="8" Margin="0,5,0,0">
+                                    <TextBox x:Name="txtMotivo" Height="175" TextWrapping="Wrap" AcceptsReturn="True"
+                                             VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" BorderThickness="0" FontSize="14"/>
                                 </Border>
                             </StackPanel>
 
                             <!-- DERECHA: Diagnóstico y Plan -->
                             <StackPanel Grid.Column="2">
                                 <Label Content="Diagnóstico Principal"/>
-                                <Border Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Padding="2" Margin="0,5,0,15">
-                                    <ComboBox x:Name="cmbDiagnostico" IsEditable="True" 
+                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="2" Margin="0,5,0,15">
+                                    <ComboBox x:Name="cmbDiagnostico" IsEditable="True"
                                               Background="Transparent" BorderThickness="0" FontSize="14" Padding="5"
                                               StaysOpenOnEdit="True"
                                               VirtualizingPanel.IsVirtualizing="True"
@@ -165,9 +83,9 @@
                                 </Border>
 
                                 <Label Content="Plan de Tratamiento / Indicaciones"/>
-                                <Border Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Padding="8" Margin="0,5,0,0">
-                                    <TextBox x:Name="txtPlan" Height="85" TextWrapping="Wrap" AcceptsReturn="True" 
-                                             VerticalScrollBarVisibility="Auto" BorderThickness="0" FontSize="14"/>
+                                <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="8" Margin="0,5,0,0">
+                                    <TextBox x:Name="txtPlan" Height="85" TextWrapping="Wrap" AcceptsReturn="True"
+                                             VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" BorderThickness="0" FontSize="14"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -193,41 +111,36 @@
                             </Border>
 
                             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                                <Button x:Name="BtnAdjuntarFoto" Content="📷 Adjuntar PC" Click="BtnAdjuntarFoto_Click" 
-                                        Background="{StaticResource LightBlueHover}" Foreground="{StaticResource PrimaryBlueBrush}" 
-                                        BorderThickness="0" Padding="15,10" FontWeight="SemiBold" Cursor="Hand"/>
+                                <Button x:Name="BtnAdjuntarFoto" Content="📷 Adjuntar PC" Click="BtnAdjuntarFoto_Click"
+                                        Style="{StaticResource BaseButtonStyle}"
+                                        Background="{StaticResource LightBlueHover}" Foreground="{StaticResource PrimaryBlueBrush}"
+                                        BorderBrush="{StaticResource PrimaryBlueBrush}"/>
 
-                                <Button x:Name="BtnSubirDesdeTelefono" Content="📱 Usar Celular" Click="BtnSubirDesdeTelefono_Click" 
-                                        Background="#28A745" Foreground="White" BorderThickness="0" 
-                                        Padding="15,10" FontWeight="SemiBold" Cursor="Hand" Margin="10,0,0,0"/>
+                                <Button x:Name="BtnSubirDesdeTelefono" Content="📱 Usar Celular" Click="BtnSubirDesdeTelefono_Click"
+                                        Style="{StaticResource SaveButtonStyle}" Margin="10,0,0,0"/>
 
-                                <Button x:Name="BtnQuitarFoto" Content="Quitar Seleccionada" Click="BtnQuitarFoto_Click" 
-                                        Background="Transparent" Foreground="#DC3545" BorderBrush="#DC3545" BorderThickness="1" 
-                                        Padding="15,10" Margin="10,0,0,0" Cursor="Hand"/>
+                                <Button x:Name="BtnQuitarFoto" Content="Quitar Seleccionada" Click="BtnQuitarFoto_Click"
+                                        Style="{StaticResource BaseButtonStyle}"
+                                        Background="Transparent" Foreground="#DC3545" BorderBrush="#DC3545"
+                                        Margin="10,0,0,0"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
                     <!-- BOTONES DE ACCIÓN FINALES -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,50">
-                        <Button x:Name="btnCancelar" Content="Descartar" Click="BtnCancelar_Click" 
-                                Background="Transparent" Foreground="{StaticResource TextLightBrush}" BorderThickness="0" 
-                                Padding="25,12" FontWeight="SemiBold" Cursor="Hand" Margin="0,0,10,0"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,30">
+                        <Button x:Name="btnCancelar" Content="Descartar" Click="BtnCancelar_Click"
+                                Style="{StaticResource CancelButtonStyle}" Margin="0,0,12,0"/>
 
-                        <Button x:Name="btnGuardar" Content="Finalizar y Guardar" Click="BtnGuardar_Click" 
-                                Background="{StaticResource PrimaryBlueBrush}" Foreground="White" BorderThickness="0" 
-                                Padding="35,12" FontWeight="Bold" Cursor="Hand" Margin="0,0,0,0">
-                            <Button.Effect>
-                                <DropShadowEffect Color="{StaticResource PrimaryBlueColor}" BlurRadius="12" ShadowDepth="3" Opacity="0.3"/>
-                            </Button.Effect>
-                        </Button>
+                        <Button x:Name="btnGuardar" Content="💾 Finalizar y Guardar" Click="BtnGuardar_Click"
+                                Style="{StaticResource AccentButtonStyle}"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>
         </ScrollViewer>
 
-        <!-- PANTALLA OSCURA DEL CÓDIGO QR (Movida a la raíz de la Grid principal) -->
-        <Grid x:Name="OverlayQR" Background="#99000000" Visibility="Collapsed" Grid.ColumnSpan="2" Panel.ZIndex="100">
+        <!-- OVERLAY DEL CÓDIGO QR -->
+        <Grid x:Name="OverlayQR" Background="#99000000" Visibility="Collapsed" Panel.ZIndex="100">
             <Border Background="White" Width="380" Height="480" CornerRadius="20" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <StackPanel Margin="30">
                     <TextBlock Text="📱 Conectar Celular" FontSize="24" FontWeight="Bold" Foreground="#2C3E50" HorizontalAlignment="Center"/>
@@ -238,10 +151,12 @@
 
                     <TextBlock x:Name="lblFotosRecibidas" Text="Esperando fotos..." FontSize="18" Foreground="#007BFF" HorizontalAlignment="Center" FontWeight="SemiBold"/>
 
-                    <Button Content="Terminar y Cerrar" Click="BtnCerrarQR_Click" Background="#DC3545" Foreground="White" Padding="10" Margin="0,25,0,0" BorderThickness="0" FontWeight="Bold" Cursor="Hand" FontSize="16"/>
+                    <Button Content="Terminar y Cerrar" Click="BtnCerrarQR_Click"
+                            Style="{StaticResource BaseButtonStyle}"
+                            Background="#DC3545" BorderBrush="#DC3545" Foreground="White"
+                            Margin="0,25,0,0" FontSize="16"/>
                 </StackPanel>
             </Border>
         </Grid>
-
     </Grid>
-</Window>
+</UserControl>

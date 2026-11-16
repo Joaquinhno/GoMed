@@ -1,168 +1,104 @@
-﻿<Window x:Class="GoMed.GenerarRecetaWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Generar Receta - GoMed" Height="850" Width="1150"
-        WindowStartupLocation="CenterScreen" Background="#F8F9FA">
+﻿<UserControl x:Class="GoMed.GenerarRecetaWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource AppBackgroundBrush}">
 
-    <Window.Resources>
-        <Color x:Key="PrimaryBlueColor">#007BFF</Color>
-        <SolidColorBrush x:Key="PrimaryBlueBrush" Color="{StaticResource PrimaryBlueColor}"/>
-        <SolidColorBrush x:Key="LightBlueHover" Color="#F1F8FF"/>
-        <SolidColorBrush x:Key="TextDarkBrush" Color="#2C3E50"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="40,30" MaxWidth="1100">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Style x:Key="GoMedCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="CornerRadius" Value="15"/>
-            <Setter Property="Padding" Value="25"/>
-            <Setter Property="Margin" Value="0,0,0,20"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
-                </Setter.Value>
-            </Setter>
-        </Style>
+            <!-- Encabezado -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,25">
+                <TextBlock Text="Generador de Recetas" Style="{StaticResource ViewTitleStyle}"/>
+                <TextBlock Text="Agregue los medicamentos y genere el PDF profesional" Style="{StaticResource ViewSubtitleStyle}"/>
+            </StackPanel>
 
-        <Style x:Key="NavButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#555"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="15,10"/>
-            <Setter Property="Margin" Value="5,2"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10">
-                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
+            <StackPanel Grid.Row="1">
+                <!-- Tarjeta 1: Selección de Paciente -->
+                <Border Style="{StaticResource GoMedCardStyle}">
+                    <StackPanel>
+                        <Label Content="Paciente Destinatario" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="5">
+                            <ComboBox x:Name="cmbPaciente" IsEditable="True" BorderThickness="0" Height="32" DisplayMemberPath="NombreCompleto" SelectedValuePath="PacienteID"/>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource LightBlueHover}"/>
-                                <Setter Property="Foreground" Value="{StaticResource PrimaryBlueBrush}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="240"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <Border Grid.Column="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0">
-            <DockPanel LastChildFill="True">
-                <StackPanel DockPanel.Dock="Top" Margin="20,30,20,0">
-                    <TextBlock Text="⚕ GoMed" Foreground="{StaticResource PrimaryBlueBrush}" FontSize="24" FontWeight="Bold" Margin="0,0,0,40"/>
-                    <Button Content="← Inicio" Style="{StaticResource NavButtonStyle}" Click="BtnVolverInicio_Click"/>
-                    <Button Content="💊 Generar Receta" Style="{StaticResource NavButtonStyle}" Background="{StaticResource LightBlueHover}" Foreground="{StaticResource PrimaryBlueBrush}" FontWeight="SemiBold"/>
-                    <Button Content="👤 Pacientes" Style="{StaticResource NavButtonStyle}"/>
-                </StackPanel>
-                <StackPanel DockPanel.Dock="Bottom" Margin="20">
-                    <Separator Background="#EEE" Margin="0,0,0,10"/>
-                    <TextBlock Text="Dr. Daniel Infante" FontSize="14" FontWeight="SemiBold" Foreground="#333"/>
-                </StackPanel>
-                <Grid/>
-            </DockPanel>
-        </Border>
-
-        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-            <Grid Margin="45,40">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <StackPanel Grid.Row="0" Margin="0,0,0,30">
-                    <TextBlock Text="Generador de Recetas" FontSize="32" FontWeight="Bold" Foreground="{StaticResource TextDarkBrush}"/>
-                    <TextBlock Text="Agregue los medicamentos y genere el PDF profesional" FontSize="16" Foreground="#666" Margin="2,5,0,0"/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="1">
-                    <Border Style="{StaticResource GoMedCardStyle}">
-                        <StackPanel>
-                            <Label Content="Paciente Destinatario" FontWeight="Bold" Margin="0,0,0,5"/>
-                            <Border Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Padding="5">
-                                <ComboBox x:Name="cmbPaciente" IsEditable="True" BorderThickness="0" Height="30" DisplayMemberPath="NombreCompleto" SelectedValuePath="PacienteID"/>
-                            </Border>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Style="{StaticResource GoMedCardStyle}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="20"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Grid.Row="0" Grid.Column="0">
-                                <Label Content="Medicamento (Genérico / Comercial)" FontWeight="Bold"/>
-                                <TextBox x:Name="txtMedicamento" Height="35" VerticalContentAlignment="Center" Padding="8,0"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="0" Grid.Column="2">
-                                <Label Content="Dosis y Frecuencia (ej: 500mg cada 8hs)" FontWeight="Bold"/>
-                                <TextBox x:Name="txtDosis" Height="35" VerticalContentAlignment="Center" Padding="8,0"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,15,0,0">
-                                <Label Content="Instrucciones Adicionales (ej: después de las comidas)" FontWeight="Bold"/>
-                                <TextBox x:Name="txtInstrucciones" Height="60" TextWrapping="Wrap" Padding="8"/>
-                            </StackPanel>
-
-                            <Button Grid.Row="2" Grid.Column="2" x:Name="btnAgregarLista" Content="+ Añadir a la Receta" 
-                                    Background="{StaticResource LightBlueHover}" Foreground="{StaticResource PrimaryBlueBrush}" 
-                                    FontWeight="Bold" Height="40" Margin="0,20,0,0" BorderThickness="0" Cursor="Hand" Click="BtnAgregarLista_Click"/>
-                        </Grid>
-                    </Border>
-
-                    <Border Style="{StaticResource GoMedCardStyle}">
-                        <StackPanel>
-                            <Label Content="Medicamentos en esta Receta" FontWeight="Bold" Margin="0,0,0,10"/>
-                            <DataGrid x:Name="dgRecetaTemporal" AutoGenerateColumns="False" CanUserAddRows="False" Background="White" BorderBrush="#EEE" Height="180">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Medicamento" Binding="{Binding Nombre}" Width="*"/>
-                                    <DataGridTextColumn Header="Dosis" Binding="{Binding Dosis}" Width="*"/>
-                                    <DataGridTemplateColumn Width="80">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Button Content="Quitar" Background="Transparent" Foreground="#DC3545" BorderThickness="0" Cursor="Hand" Click="BtnQuitarMedicamento_Click"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </StackPanel>
-                    </Border>
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,50">
-                        <Button Content="Limpiar Todo" Background="Transparent" Foreground="#666" BorderThickness="0" Padding="20,10" Margin="0,0,10,0" Cursor="Hand"/>
-
-                        <Button x:Name="btnPrevisualizar" Content="👁 Previsualizar" Click="BtnPrevisualizar_Click" 
-                         Background="#E8F0F8" Foreground="{StaticResource PrimaryBlueBrush}" 
-                        BorderThickness="0" Padding="25,15" FontWeight="SemiBold" Cursor="Hand" Margin="0,0,10,0"/>
-                        
-                        <Button x:Name="btnGenerarPDF" Content="💾 Generar y Guardar PDF" Background="{StaticResource PrimaryBlueBrush}" 
-                                Foreground="White" BorderThickness="0" Padding="35,15" FontWeight="Bold" Cursor="Hand" Click="BtnGenerarPDF_Click">
-                            <Button.Effect>
-                                <DropShadowEffect Color="{StaticResource PrimaryBlueColor}" BlurRadius="12" ShadowDepth="3" Opacity="0.3"/>
-                            </Button.Effect>
-                        </Button>
                     </StackPanel>
+                </Border>
+
+                <!-- Tarjeta 2: Carga de Medicamento -->
+                <Border Style="{StaticResource GoMedCardStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0">
+                            <Label Content="Medicamento (Genérico / Comercial)" FontWeight="Bold"/>
+                            <TextBox x:Name="txtMedicamento" Height="38" VerticalContentAlignment="Center" Padding="10,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="0" Grid.Column="2">
+                            <Label Content="Dosis y Frecuencia (ej: 500mg cada 8hs)" FontWeight="Bold"/>
+                            <TextBox x:Name="txtDosis" Height="38" VerticalContentAlignment="Center" Padding="10,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,15,0,0">
+                            <Label Content="Instrucciones Adicionales (ej: después de las comidas)" FontWeight="Bold"/>
+                            <TextBox x:Name="txtInstrucciones" Height="65" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" Padding="10,8"/>
+                        </StackPanel>
+
+                        <Button Grid.Row="2" Grid.Column="2" x:Name="btnAgregarLista" Content="+ Añadir a la Receta"
+                                Style="{StaticResource BaseButtonStyle}"
+                                Background="{StaticResource LightBlueHover}" Foreground="{StaticResource PrimaryBlueBrush}"
+                                BorderBrush="{StaticResource PrimaryBlueBrush}"
+                                Margin="0,20,0,0" Click="BtnAgregarLista_Click"/>
+                    </Grid>
+                </Border>
+
+                <!-- Tarjeta 3: Tabla Temporal de Medicamentos -->
+                <Border Style="{StaticResource GoMedCardStyle}">
+                    <StackPanel>
+                        <Label Content="Medicamentos en esta Receta" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <DataGrid x:Name="dgRecetaTemporal" AutoGenerateColumns="False" CanUserAddRows="False"
+                                  Background="White" BorderBrush="#EEE" RowHeight="38" FontSize="14" Height="180">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Medicamento" Binding="{Binding Nombre}" Width="*"/>
+                                <DataGridTextColumn Header="Dosis" Binding="{Binding Dosis}" Width="*"/>
+                                <DataGridTemplateColumn Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Quitar" Background="Transparent" Foreground="#DC3545" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Click="BtnQuitarMedicamento_Click"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Botones Finales -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,30">
+                    <Button Content="Limpiar Todo" Style="{StaticResource CancelButtonStyle}" Margin="0,0,12,0" Click="BtnLimpiarTodo_Click"/>
+
+                    <Button x:Name="btnPrevisualizar" Content="👁 Previsualizar" Click="BtnPrevisualizar_Click"
+                            Style="{StaticResource BaseButtonStyle}"
+                            Background="#E8F0F8" Foreground="{StaticResource PrimaryBlueBrush}" BorderBrush="{StaticResource PrimaryBlueBrush}"
+                            Margin="0,0,12,0"/>
+
+                    <Button x:Name="btnGenerarPDF" Content="💾 Generar y Guardar PDF"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Click="BtnGenerarPDF_Click"/>
                 </StackPanel>
-            </Grid>
-        </ScrollViewer>
-    </Grid>
-</Window>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

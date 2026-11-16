@@ -1,21 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace GoMed
 {
-    public partial class DetalleConsultaWindow : Window
+    public partial class DetalleConsultaWindow : UserControl
     {
         private int _consultaId;
 
@@ -30,26 +21,23 @@ namespace GoMed
         {
             using (var context = new GoMed.Data.AppContext())
             {
-                // 1. Buscamos la consulta incluyendo al paciente
                 var consulta = context.Consultas
                     .Include(c => c.Paciente)
                     .FirstOrDefault(c => c.ConsultaID == _consultaId);
 
                 if (consulta != null)
                 {
-                    // Info de cabecera
-                    lblInfoPaciente.Text = $"Paciente: {consulta.Paciente.Nombre} {consulta.Paciente.Apellido} | Fecha: {consulta.Fecha:dd/MM/yyyy}";
+                    lblInfoPaciente.Text = $"Paciente: {consulta.Paciente.Nombre} {consulta.Paciente.Apellido}   |   Fecha: {consulta.Fecha:dd/MM/yyyy}";
 
-                    // ASIGNACIÓN A LOS DOS CUADROS NUEVOS
                     txtMotivoDetalle.Text = string.IsNullOrWhiteSpace(consulta.MotivoConsulta)
                                             ? "No se registró motivo."
                                             : consulta.MotivoConsulta;
 
-                    txtTratamientoDetalle.Text = string.IsNullOrWhiteSpace(consulta.Diagnostico)
-                                                ? "No se registró diagnóstico o tratamiento."
-                                                : consulta.Diagnostico;
+                    string diag = string.IsNullOrWhiteSpace(consulta.Diagnostico) ? "Sin diagnóstico especificado." : consulta.Diagnostico;
+                    string plan = string.IsNullOrWhiteSpace(consulta.PlanTratamiento) ? "" : $"\n\nPlan / Indicaciones:\n{consulta.PlanTratamiento}";
 
-                    // Cargar las fotos (buscando en la tabla ConsultaFotos)
+                    txtTratamientoDetalle.Text = diag + plan;
+
                     var fotosRutas = context.ConsultaFotos
                         .Where(f => f.ConsultaId == _consultaId)
                         .Select(f => f.RutaFoto)
@@ -60,17 +48,15 @@ namespace GoMed
             }
         }
 
-        // Abrir imagen en grande al hacer clic
-        private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Image_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var img = sender as System.Windows.Controls.Image;
-            if (img != null)
+            var img = sender as Image;
+            if (img != null && img.Source != null)
             {
-                // Un truco rápido para ver la foto en grande es usar un visor externo
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(img.Source.ToString()) { UseShellExecute = true });
             }
         }
 
-        private void BtnCerrar_Click(object sender, RoutedEventArgs e) => this.Close();
+        private void BtnCerrar_Click(object sender, RoutedEventArgs e) => MainWindow.Instance?.Volver();
     }
 }

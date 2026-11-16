@@ -1,25 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using GoMed.Data;
+﻿using GoMed.Data;
 using GoMed.Models;
 using GoMed.Utils;
-using Microsoft.EntityFrameworkCore;
-
+using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace GoMed
 {
-    public partial class CargarPacienteWindow : Window
+    public partial class CargarPacienteWindow : UserControl
     {
         // Variable para saber si estamos editando (si es mayor a 0, estamos editando)
         private int _pacienteIdAEditar = 0;
@@ -35,8 +24,8 @@ namespace GoMed
         public CargarPacienteWindow(int pacienteId) : this()
         {
             _pacienteIdAEditar = pacienteId;
-            this.Title = "Editar Información del Paciente";
-            btnGuardar.Content = "Actualizar Paciente"; // Cambiamos el texto del botón
+            lblTituloVista.Text = "Editar Información del Paciente";
+            btnGuardar.Content = "💾 Actualizar Paciente";
 
             CargarDatosDelPaciente();
         }
@@ -48,7 +37,6 @@ namespace GoMed
                 var p = context.Pacientes.Find(_pacienteIdAEditar);
                 if (p != null)
                 {
-                    // Llenamos los TextBoxes
                     txtNombre.Text = p.Nombre;
                     txtApellido.Text = p.Apellido;
                     txtDni.Text = p.Dni;
@@ -59,12 +47,10 @@ namespace GoMed
                     txtEmail.Text = p.Email;
                     txtOcupacion.Text = p.Ocupacion;
 
-                    // Marcamos el RadioButton del Género
                     if (p.Genero == "Masculino") rbMasculino.IsChecked = true;
                     else if (p.Genero == "Femenino") rbFemenino.IsChecked = true;
                     else if (p.Genero == "Otro") rbOtro.IsChecked = true;
 
-                    // Marcamos el RadioButton del Estado Civil
                     if (p.EstadoCivil == "Soltero/a") rbSoltero.IsChecked = true;
                     else if (p.EstadoCivil == "Casado/a") rbCasado.IsChecked = true;
                     else if (p.EstadoCivil == "Divorciado/a") rbDivorciado.IsChecked = true;
@@ -73,7 +59,6 @@ namespace GoMed
             }
         }
 
-        // ... (El método CargarLugaresDeNacimiento y DpFechaNacimiento_SelectedDateChanged quedan exactamente igual que los tenías)
         private void CargarLugaresDeNacimiento()
         {
             try
@@ -84,7 +69,10 @@ namespace GoMed
                     cmbLugarNacimiento.ItemsSource = lugares;
                 }
             }
-            catch (Exception ex) { Console.WriteLine($"Error al cargar lugares: {ex.Message}"); }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cargar lugares: {ex.Message}");
+            }
         }
 
         private void DpFechaNacimiento_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
@@ -96,7 +84,10 @@ namespace GoMed
                 if (dpFechaNacimiento.SelectedDate.Value.Date > hoy.AddYears(-edad)) edad--;
                 lblEdad.Text = $"Edad: {edad} años";
             }
-            else lblEdad.Text = "";
+            else
+            {
+                lblEdad.Text = "-- años";
+            }
         }
 
         private void BtnGuardar_Click(object sender, RoutedEventArgs e)
@@ -113,7 +104,6 @@ namespace GoMed
                 {
                     if (_pacienteIdAEditar == 0)
                     {
-                        // MODO CREACIÓN (El código original que ya tenías)
                         var nuevoPaciente = new Paciente
                         {
                             Nombre = txtNombre.Text,
@@ -135,7 +125,6 @@ namespace GoMed
                     }
                     else
                     {
-                        // MODO EDICIÓN
                         var pacienteExistente = context.Pacientes.Find(_pacienteIdAEditar);
                         if (pacienteExistente != null)
                         {
@@ -157,7 +146,16 @@ namespace GoMed
                     }
 
                     context.SaveChanges();
-                    this.Close();
+                }
+
+                // Si venimos de editar desde el listado, volvemos al listado y lo refrescamos; si fue alta directa, vamos al listado de pacientes
+                if (_pacienteIdAEditar > 0)
+                {
+                    MainWindow.Instance?.Volver();
+                }
+                else
+                {
+                    MainWindow.Instance?.BtnVisualizarPacientes_Click(this, new RoutedEventArgs());
                 }
             }
             catch (Exception ex)
@@ -183,7 +181,7 @@ namespace GoMed
             return "No especificado";
         }
 
-        private void btnCancelar_Click(object sender, RoutedEventArgs e) => this.Close();
-        private void BtnVolver_Click(object sender, RoutedEventArgs e) => this.Close();
+        private void btnCancelar_Click(object sender, RoutedEventArgs e) => MainWindow.Instance?.Volver();
+        private void BtnVolver_Click(object sender, RoutedEventArgs e) => MainWindow.Instance?.Volver();
     }
 }
